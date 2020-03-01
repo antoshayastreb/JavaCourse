@@ -11,6 +11,10 @@
     <title>Курсы Java. Вход</title>
 </head>
 <body class="text-center">
+<?php
+    require ('connect.php');
+
+?>
 <form class="form-signin">
     <img class="mb-4" src="./assets/jde.png" alt="" width="72" height="72">
     <h1 class="h3 mb-3 font-weight-normal">Вход для зарегистрированных пользователей</h1>

@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7fd840ed-b5da-4f58-96aa-4a593d01c611" name="Default Changelist" comment="Перевод на русский">
-      <change afterPath="$PROJECT_DIR$/Register.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Connect.php" beforeDir="false" afterPath="$PROJECT_DIR$/Connect.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Enter.php" beforeDir="false" afterPath="$PROJECT_DIR$/Enter.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,7 +60,7 @@
       <workItem from="1582988875805" duration="4585000" />
       <workItem from="1583005821560" duration="1629000" />
       <workItem from="1583056081151" duration="621000" />
-      <workItem from="1583073162410" duration="3222000" />
+      <workItem from="1583073162410" duration="3463000" />
     </task>
     <task id="LOCAL-00001" summary="Перевод на русский">
       <created>1583074651922</created>
@@ -77,7 +76,14 @@
       <option name="project" value="LOCAL" />
       <updated>1583075472932</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Страница регистрации">
+      <created>1583076528316</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1583076528316</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -88,7 +94,8 @@
     <option name="CHECK_NEW_TODO" value="false" />
     <MESSAGE value="Перевод на русский" />
     <MESSAGE value="Соединение с базой" />
-    <option name="LAST_COMMIT_MESSAGE" value="Соединение с базой" />
+    <MESSAGE value="Страница регистрации" />
+    <option name="LAST_COMMIT_MESSAGE" value="Страница регистрации" />
   </component>
   <component name="WindowStateProjectService">
     <state x="370" y="31" key="#CLI_Interpreters" timestamp="1583005987990">
@@ -108,10 +115,10 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="137" y="23" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1366.728@0.0.1366.728" timestamp="1582991525231" />
-    <state x="598" y="125" key="CommitChangelistDialog2" timestamp="1583075472689">
+    <state x="598" y="125" key="CommitChangelistDialog2" timestamp="1583076847062">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="598" y="125" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1583075472689" />
+    <state x="598" y="125" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1583076847062" />
     <state x="570" y="131" key="FileChooserDialogImpl" timestamp="1583005984458">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -141,10 +148,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="427" y="153" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1583005994291" />
-    <state x="565" y="264" key="Vcs.Push.Dialog.v2" timestamp="1583075478296">
+    <state x="565" y="264" key="Vcs.Push.Dialog.v2" timestamp="1583076531388">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="565" y="264" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1583075478296" />
+    <state x="565" y="264" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1583076531388" />
     <state x="550" y="274" key="com.intellij.ide.util.TipDialog" timestamp="1583073871189">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
