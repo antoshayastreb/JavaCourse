@@ -25,7 +25,7 @@
         <p class="lead">Добро пожаловать на курсы по языку Java. Если у Вас уже есть аккаунт на нашем сайте, нажмите кнопку "Войти", если нет, то скорее регистрируйтесь.</p>
         <p class="lead">
             <a href="Enter.php" class="btn btn-lg btn-primary">Войти</a>
-            <a href="#" class="btn btn-lg btn-secondary">Зарегистрироваться</a>
+            <a href="Register.php" class="btn btn-lg btn-secondary">Зарегистрироваться</a>
         </p>
     </main>
 
