@@ -15,9 +15,9 @@
     <img class="mb-4" src="./assets/jde.png" alt="" width="72" height="72">
     <h1 class="h3 mb-3 font-weight-normal">Вход для зарегистрированных пользователей</h1>
     <label for="inputEmail" class="sr-only">Email адрес</label>
-    <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+    <input type="email" id="inputEmail" class="form-control" placeholder="Email адрес" required autofocus>
     <label for="inputPassword" class="sr-only">Пароль</label>
-    <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+    <input type="password" id="inputPassword" class="form-control" placeholder="Пароль" required>
     <div class="checkbox mb-3">
         <label>
             <input type="checkbox" value="remember-me"> Запомнить меня
