@@ -13,9 +13,10 @@
 <body class="text-center">
 <?php
     require ('connect.php');
+    if (isset($_POST['user_firstname']) && isset($_POST['user_lastname']) && isset($_POST['user_parname']) )
 
 ?>
-<form class="form-signin">
+<form class="form-signin" method="POST">
     <img class="mb-4" src="./assets/jde.png" alt="" width="72" height="72">
     <h1 class="h3 mb-3 font-weight-normal">Вход для зарегистрированных пользователей</h1>
     <label for="inputEmail" class="sr-only">Email адрес</label>

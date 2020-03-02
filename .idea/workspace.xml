@@ -3,8 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="7fd840ed-b5da-4f58-96aa-4a593d01c611" name="Default Changelist" comment="Перевод на русский">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Connect.php" beforeDir="false" afterPath="$PROJECT_DIR$/Connect.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Enter.php" beforeDir="false" afterPath="$PROJECT_DIR$/Enter.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Register.php" beforeDir="false" afterPath="$PROJECT_DIR$/Register.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,7 +29,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../php/ext/php_xdebug.dll" />
     <property name="settings.editor.selected.configurable" value="reference.webide.settings.project.settings.php" />
   </component>
   <component name="RecentsManager">
@@ -61,6 +61,8 @@
       <workItem from="1583005821560" duration="1629000" />
       <workItem from="1583056081151" duration="621000" />
       <workItem from="1583073162410" duration="3463000" />
+      <workItem from="1583134291243" duration="547000" />
+      <workItem from="1583136158775" duration="3651000" />
     </task>
     <task id="LOCAL-00001" summary="Перевод на русский">
       <created>1583074651922</created>
@@ -98,10 +100,11 @@
     <option name="LAST_COMMIT_MESSAGE" value="Страница регистрации" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="370" y="31" key="#CLI_Interpreters" timestamp="1583005987990">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="263" y="23" key="#CLI_Interpreters" timestamp="1583134720922">
+      <screen x="0" y="0" width="1366" height="768" />
     </state>
     <state x="263" y="22" key="#CLI_Interpreters/0.0.1366.728@0.0.1366.728" timestamp="1582989111811" />
+    <state x="263" y="23" key="#CLI_Interpreters/0.0.1366.768@0.0.1366.768" timestamp="1583134720922" />
     <state x="370" y="31" key="#CLI_Interpreters/0.0.1920.1040@0.0.1920.1040" timestamp="1583005987990" />
     <state x="560" y="202" key="#Deployment" timestamp="1583074682499">
       <screen x="0" y="0" width="1920" height="1040" />
@@ -119,9 +122,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="598" y="125" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1583076847062" />
-    <state x="570" y="131" key="FileChooserDialogImpl" timestamp="1583005984458">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="406" y="97" key="FileChooserDialogImpl" timestamp="1583134716942">
+      <screen x="0" y="0" width="1366" height="768" />
     </state>
+    <state x="406" y="97" key="FileChooserDialogImpl/0.0.1366.768@0.0.1366.768" timestamp="1583134716942" />
     <state x="570" y="131" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1583005984458" />
     <state width="1286" height="162" key="GridCell.Tab.0.bottom" timestamp="1582995514038">
       <screen x="0" y="0" width="1366" height="728" />
@@ -144,18 +148,20 @@
     </state>
     <state x="517" y="296" key="NewPhpFileDialog/0.0.1366.728@0.0.1366.728" timestamp="1582994689868" />
     <state x="727" y="423" key="NewPhpFileDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1583074924071" />
-    <state x="427" y="153" key="SettingsEditor" timestamp="1583005994291">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="161" y="15" width="998" height="711" key="SettingsEditor" timestamp="1583134840516">
+      <screen x="0" y="0" width="1366" height="768" />
     </state>
+    <state x="161" y="15" width="998" height="711" key="SettingsEditor/0.0.1366.768@0.0.1366.768" timestamp="1583134840516" />
     <state x="427" y="153" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1583005994291" />
     <state x="565" y="264" key="Vcs.Push.Dialog.v2" timestamp="1583076531388">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="565" y="264" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1583076531388" />
-    <state x="550" y="274" key="com.intellij.ide.util.TipDialog" timestamp="1583073871189">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="391" y="202" key="com.intellij.ide.util.TipDialog" timestamp="1583136159518">
+      <screen x="0" y="0" width="1366" height="768" />
     </state>
     <state x="391" y="192" key="com.intellij.ide.util.TipDialog/0.0.1366.728@0.0.1366.728" timestamp="1582988878586" />
+    <state x="391" y="202" key="com.intellij.ide.util.TipDialog/0.0.1366.768@0.0.1366.768" timestamp="1583136159518" />
     <state x="550" y="274" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1583073871189" />
   </component>
 </project>
