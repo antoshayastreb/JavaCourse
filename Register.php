@@ -18,12 +18,12 @@ if (isset($_POST['inputEmail']) && isset($_POST['inputPassword'])){
         $email = $_POST['inputEmail'];
         $user_firstname = $_POST['user_firstname'];
         $user_lasttname = $_POST['user_lastname'];
-        $user_partname = $_POST['user_parname'];
+        $user_parname = $_POST['user_parname'];
         $password = $_POST['inputPassword'];
         $pass_hash = password_hash($password, PASSWORD_DEFAULT);
         $is_teacher = 0;
 
-        $quary = "INSERT INTO users (user_firstname, user_lastname, user_parname, email, pass_hash, is_teacher) VALUES ('$user_firstname', '$user_lasttname', '$user_partname',
+        $quary = "INSERT INTO users (user_firstname, user_lastname, user_parname, email, pass_hash, is_teacher) VALUES ('$user_firstname', '$user_lasttname', '$user_parname',
         '$email', '$pass_hash', '$is_teacher')";
         $result = mysqli_query($connection, $quary);
 

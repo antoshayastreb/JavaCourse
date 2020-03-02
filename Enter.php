@@ -12,8 +12,29 @@
 </head>
 <body class="text-center">
 <?php
+    session_start();
     require ('connect.php');
-    if (isset($_POST['user_firstname']) && isset($_POST['user_lastname']) && isset($_POST['user_parname']) )
+    if (isset($_POST['inputEmail']) and isset($_POST['inputPassword'])){
+        $id = '';
+        $user_firstname = '';
+        $user_lasttname = '';
+        $user_parname = '';
+        $email = $_POST['inputEmail'];
+        $password = $_POST['inputPassword'];
+        $pass_hash = '';
+
+        $quary = "SELECT * FROM users WHERE email = '$email', pass_hash = '$pass_hash', user_firstname = '$user_firstname', user_lasttname = '$user_lasttname', user_partname = '$user_parname', id = '$id'";
+        $result = mysqli_query($connection, $quary)or die(mysqli_error($connection));
+        $count = mysqli_num_rows($result);
+
+        if (count == 1){
+            $_SESSION['email'] = $email;
+        } else{
+            $fmsg = "Ошибка";
+        }
+    }
+
+    if (isset ($_SESSION['']))
 
 ?>
 <form class="form-signin" method="POST">
