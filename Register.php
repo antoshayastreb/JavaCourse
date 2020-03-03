@@ -57,7 +57,7 @@ if (isset($_POST['inputEmail']) && isset($_POST['inputPassword'])){
         $sth->execute();
         $array = $sth->fetchAll(PDO::FETCH_ASSOC);
         foreach ($array as $key => $value) {
-            print "<option value=\"$value[ID]\">$value[FirstName] $value[LastName] </option>";
+            print "<option value=\"$value[ID]\">$value[FirstName] $value[patronymic] $value[LastName] </option>";
         }
         ?>
     </select>
