@@ -1,6 +1,5 @@
 <?php
-    //$connection = mysqli_connect('localhost', 'root');
-    //$select_db = mysqli_select_db($connection, 'javacourses');
+
 try {
     $db = new PDO('mysql:dbname=javacourses;host=localhost',
         'root','');
