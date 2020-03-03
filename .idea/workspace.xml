@@ -59,8 +59,8 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="PHP Remote Debug.localhost" />
       <item itemvalue="PHP Script.index.php" />
+      <item itemvalue="PHP Remote Debug.localhost" />
     </list>
     <recent_temporary>
       <list>
@@ -247,9 +247,10 @@
     </state>
     <state width="1877" height="348" key="GridCell.Tab.2.right/0.0.1920.1040@0.0.1920.1040" timestamp="1583261356363" />
     <state width="1258" height="550" key="GridCell.Tab.2.right/0.0.2560.1560@0.0.2560.1560" timestamp="1583159628490" />
-    <state x="672" y="236" key="MultipleFileMergeDialog" timestamp="1583260805875">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="478" y="163" key="MultipleFileMergeDialog" timestamp="1583266399083">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
+    <state x="478" y="163" key="MultipleFileMergeDialog/0.0.1366.728@0.0.1366.728" timestamp="1583266399083" />
     <state x="672" y="236" key="MultipleFileMergeDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1583260805875" />
     <state x="727" y="423" key="NewPhpFileDialog" timestamp="1583074924071">
       <screen x="0" y="0" width="1920" height="1040" />
@@ -273,9 +274,10 @@
     <state x="391" y="202" key="com.intellij.ide.util.TipDialog/0.0.1366.768@0.0.1366.768" timestamp="1583136159518" />
     <state x="550" y="274" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1583262066438" />
     <state x="733" y="410" key="com.intellij.ide.util.TipDialog/0.0.2560.1560@0.0.2560.1560" timestamp="1583154685545" />
-    <state x="769" y="437" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1583260794060">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="547" y="306" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1583266391143">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
+    <state x="547" y="306" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1366.728@0.0.1366.728" timestamp="1583266391143" />
     <state x="769" y="437" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040@0.0.1920.1040" timestamp="1583260794060" />
   </component>
   <component name="XDebuggerManager">
