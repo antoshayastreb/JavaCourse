@@ -13,21 +13,30 @@
 <body class="text-center">
 <?php
     session_start();
+    $scMess = "";
+    $flMess = "";
     require ('connect.php');
     if (isset($_POST['inputEmail']) and isset($_POST['inputPassword'])){
+        $password = $_POST['inputPassword'];
+        //$pass_hash = password_hash($password, PASSWORD_DEFAULT);
         $sql = "SELECT * FROM jc_students WHERE `email`=:email ";
         $sth = $db->prepare($sql);
         $sth->bindValue(':email', $_POST['inputEmail']);
-        $sth->execute( );
-        $array = $sth->fetchAll(PDO::FETCH_ASSOC);
-        $phpgovno =  $array[0];
-        if(count($array)>0){
-            if (password_verify($_POST['inputPassword'], $phpgovno['pass_hash'])){
-                echo 'Привет ', $phpgovno['LastName'], ' ', $phpgovno['FirstName'], ' ',$phpgovno['patronymic'];
-            }else echo  'Пароль неверный';
+        try {
+            $sth->execute();
+            $row = $sth->fetchAll(PDO::FETCH_ASSOC);
+            if (count($row) > 0) {
+                $pass_hash = $row[0]['pass_hash'];
+                if (password_verify($password, $pass_hash)) {
+                    $scMess ="Привет, ".$row[0]['LastName']." ".$row[0]['FirstName']." ".$row[0]['patronymic'];
+                } else $flMess =  'Пароль неверный!';
 
-        }else echo 'Email не существует';
-
+            } else $flMess = 'Email не существует!';
+        }
+        catch (PDOException $e)
+        {
+            $flMess = 'Ошибка Базы Данных!';
+        }
 
 
 
@@ -38,6 +47,8 @@
 <form class="form-signin" method="POST">
     <img class="mb-4" src="./assets/logo.png" alt="" width="97" height="178">
     <h1 class="h3 mb-3 font-weight-normal">Вход для зарегистрированных пользователей</h1>
+    <?php if(isset($scMess)){?><div class="alert-success" role="alert"><?php echo $scMess; ?></div><?php }?>
+    <?php if(isset($flMess)){?><div class="alert-danger" role="alert"><?php echo $flMess; ?></div><?php }?>
     <div class="row">
         <label for="inputEmail">Email</label>
         <input type="email" name="inputEmail" class="form-control" placeholder="" required autofocus>
@@ -45,7 +56,7 @@
     <p></p>
     <div class="row">
         <label for="inputPassword">Пароль</label>
-        <input type="password" name="inputPassword" class="form-control" placeholder="" required>
+        <input type="Password" name="inputPassword" class="form-control" placeholder="" required>
     </div>
 
     <div class="checkbox mb-3">
