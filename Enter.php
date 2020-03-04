@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (count($_GET)>0){
+if ((count($_GET)>0) && array_key_exists('do',$_GET)){
 if($_GET['do'] == 'logout'){
     session_destroy();
     header("Location: Enter.php");
