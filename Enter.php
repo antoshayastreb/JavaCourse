@@ -2,7 +2,6 @@
 session_start();
 if (count($_GET)>0){
 if($_GET['do'] == 'logout'){
-    unset($_SESSION['admin']);
     session_destroy();
     header("Location: Enter.php");
 }
