@@ -15,13 +15,8 @@
     session_start();
     require ('connect.php');
     if (isset($_POST['inputEmail']) and isset($_POST['inputPassword'])){
-        $id = '';
-        $user_firstname = '';
-        $user_lasttname = '';
-        $user_parname = '';
         $email = $_POST['inputEmail'];
         $password = $_POST['inputPassword'];
-        $pass_hash = '';
 
         $quary = "SELECT * FROM users WHERE email = '$email', pass_hash = '$pass_hash', user_firstname = '$user_firstname', user_lasttname = '$user_lasttname', user_partname = '$user_parname', id = '$id'";
         $result = mysqli_query($connection, $quary)or die(mysqli_error($connection));
@@ -38,12 +33,18 @@
 
 ?>
 <form class="form-signin" method="POST">
-    <img class="mb-4" src="./assets/jde.png" alt="" width="72" height="72">
+    <img class="mb-4" src="./assets/logo.png" alt="" width="97" height="178">
     <h1 class="h3 mb-3 font-weight-normal">Вход для зарегистрированных пользователей</h1>
-    <label for="inputEmail" class="sr-only">Email адрес</label>
-    <input type="email" id="inputEmail" class="form-control" placeholder="Email адрес" required autofocus>
-    <label for="inputPassword" class="sr-only">Пароль</label>
-    <input type="password" id="inputPassword" class="form-control" placeholder="Пароль" required>
+    <div class="row">
+        <label for="inputEmail">Email</label>
+        <input type="email" id="inputEmail" class="form-control" placeholder="" required autofocus>
+    </div>
+    <p></p>
+    <div class="row">
+        <label for="inputPassword">Пароль</label>
+        <input type="password" id="inputPassword" class="form-control" placeholder="" required>
+    </div>
+
     <div class="checkbox mb-3">
         <label>
             <input type="checkbox" value="remember-me"> Запомнить меня
