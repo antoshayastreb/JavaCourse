@@ -15,21 +15,24 @@
     session_start();
     require ('connect.php');
     if (isset($_POST['inputEmail']) and isset($_POST['inputPassword'])){
-        $email = $_POST['inputEmail'];
-        $password = $_POST['inputPassword'];
+        $sql = "SELECT * FROM jc_students WHERE `email`=:email ";
+        $sth = $db->prepare($sql);
+        $sth->bindValue(':email', $_POST['inputEmail']);
+        $sth->execute( );
+        $array = $sth->fetchAll(PDO::FETCH_ASSOC);
+        $phpgovno =  $array[0];
+        if(count($array)>0){
+            if (password_verify($_POST['inputPassword'], $phpgovno['pass_hash'])){
+                echo 'Привет ', $phpgovno['LastName'], ' ', $phpgovno['FirstName'], ' ',$phpgovno['patronymic'];
+            }else echo  'Пароль неверный';
 
-        $quary = "SELECT * FROM users WHERE email = '$email', pass_hash = '$pass_hash', user_firstname = '$user_firstname', user_lasttname = '$user_lasttname', user_partname = '$user_parname', id = '$id'";
-        $result = mysqli_query($connection, $quary)or die(mysqli_error($connection));
-        $count = mysqli_num_rows($result);
+        }else echo 'Email не существует';
 
-        if (count == 1){
-            $_SESSION['email'] = $email;
-        } else{
-            $fmsg = "Ошибка";
-        }
+
+
+
     }
 
-    if (isset ($_SESSION['']))
 
 ?>
 <form class="form-signin" method="POST">
@@ -37,12 +40,12 @@
     <h1 class="h3 mb-3 font-weight-normal">Вход для зарегистрированных пользователей</h1>
     <div class="row">
         <label for="inputEmail">Email</label>
-        <input type="email" id="inputEmail" class="form-control" placeholder="" required autofocus>
+        <input type="email" name="inputEmail" class="form-control" placeholder="" required autofocus>
     </div>
     <p></p>
     <div class="row">
         <label for="inputPassword">Пароль</label>
-        <input type="password" id="inputPassword" class="form-control" placeholder="" required>
+        <input type="password" name="inputPassword" class="form-control" placeholder="" required>
     </div>
 
     <div class="checkbox mb-3">
