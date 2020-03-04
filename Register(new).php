@@ -35,10 +35,19 @@
         $InGroup = $_POST['csGroup'];
 
 
-        /*Я всю ночь провозился и так и не понял, как это работает.
-         * $sth = $db->prepare("INSERT * INTO jc_students (EMAIL, FirstName, LastName, patronymic, InGroup, teacher, stage, registered, pass_hash)");
-        $sth->execute(array(EMAIL => $email, FirstName => $FirstName, LastName => $LastName, patronymic => $patronymic, InGroup => $InGroup,
-            teacher => $teacher, stage => $stage, registered => $registered, pass_hash => $pass_hash));*/
+        //Я всю ночь провозился и так и не понял, как это работает.
+        //INSERT INTO `jc_students` (`ID`, `email`, `FirstName`, `LastName`, `patronymic`, `pass_hash`) VALUES (NULL, 'pupkin@mail.ru', 'Алексей', 'Пупкин', 'Вячеславович', '');
+        $sth = $db->prepare("INSERT INTO `jc_students` (`ID`, `EMAIL`, `FirstName`, `LastName`, `patronymic`, `InGroup`, `teacher`, `stage`, `registered`, `pass_hash`) VALUES (?,?,?,?,?,?,?,?,?,?)");
+        /*$sth = $db->prepare("INSERT INTO `jc_teachers` (`ID`, `email`, `FirstName`, `patronymic`, `LastName`, `pass_hash`) VALUES (?,?,?,?,?,?)");
+        $sth->execute(array('2', 'phil@mail.ru', 'Александр', 'Иванович', 'Быков', ''));*/
+        $sth->execute(array(NULL, $email, $FirstName, $LastName, $patronymic, $InGroup, $teacher, $stage, $registered, $pass_hash));
+        $insert_id = $db->lastInsertId();
+
+        if ($sth){
+            $smsg = "Регистрация прошла успешно";
+        } else {
+            $fsmsg = "Ошибка";
+        }
         
     }
 ?>
