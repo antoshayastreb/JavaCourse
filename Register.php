@@ -1,3 +1,35 @@
+<?php
+require ('connect.php');
+if (isset($_POST['email']) && isset($_POST['password'])){
+    $email = $_POST['email'];
+    $LastName = $_POST['LastName'];
+    $FirstName = $_POST['FirstName'];
+    $patronymic = $_POST['patronymic'];
+    $password = $_POST['password'];
+    $registered = date("Y-m-d H:i:s");
+    $stage = 1;
+    $pass_hash = password_hash($password, PASSWORD_DEFAULT);
+    $teacher = $_POST['csTeacher'];
+    $InGroup = $_POST['csGroup'];
+
+
+    //Я всю ночь провозился и так и не понял, как это работает.
+    //INSERT INTO `jc_students` (`ID`, `email`, `FirstName`, `LastName`, `patronymic`, `pass_hash`) VALUES (NULL, 'pupkin@mail.ru', 'Алексей', 'Пупкин', 'Вячеславович', '');
+    $sth = $db->prepare("INSERT INTO `jc_students` (`ID`, `EMAIL`, `FirstName`, `LastName`, `patronymic`, `InGroup`, `teacher`, `stage`, `registered`, `pass_hash`) VALUES (?,?,?,?,?,?,?,?,?,?)");
+    /*$sth = $db->prepare("INSERT INTO `jc_teachers` (`ID`, `email`, `FirstName`, `patronymic`, `LastName`, `pass_hash`) VALUES (?,?,?,?,?,?)");
+    $sth->execute(array('2', 'phil@mail.ru', 'Александр', 'Иванович', 'Быков', ''));*/
+    $sth->execute(array(NULL, $email, $FirstName, $LastName, $patronymic, $InGroup, $teacher, $stage, $registered, $pass_hash));
+    $insert_id = $db->lastInsertId();
+
+    if ($sth){
+        $smsg = "Регистрация прошла успешно";
+        header("Location: Lesson.php");
+    } else {
+        $fsmsg = "Ошибка";
+    }
+
+}
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -17,42 +49,6 @@
 </head>
 
 <body class="bg-light">
-
-<?php
-    require ('connect.php');
-
-
-    if (isset($_POST['email']) && isset($_POST['password'])){
-        $email = $_POST['email'];
-        $LastName = $_POST['LastName'];
-        $FirstName = $_POST['FirstName'];
-        $patronymic = $_POST['patronymic'];
-        $password = $_POST['password'];
-        $registered = date("Y-m-d H:i:s");
-        $stage = 1;
-        $pass_hash = password_hash($password, PASSWORD_DEFAULT);
-        $teacher = $_POST['csTeacher'];
-        $InGroup = $_POST['csGroup'];
-
-
-        //Я всю ночь провозился и так и не понял, как это работает.
-        //INSERT INTO `jc_students` (`ID`, `email`, `FirstName`, `LastName`, `patronymic`, `pass_hash`) VALUES (NULL, 'pupkin@mail.ru', 'Алексей', 'Пупкин', 'Вячеславович', '');
-        $sth = $db->prepare("INSERT INTO `jc_students` (`ID`, `EMAIL`, `FirstName`, `LastName`, `patronymic`, `InGroup`, `teacher`, `stage`, `registered`, `pass_hash`) VALUES (?,?,?,?,?,?,?,?,?,?)");
-        /*$sth = $db->prepare("INSERT INTO `jc_teachers` (`ID`, `email`, `FirstName`, `patronymic`, `LastName`, `pass_hash`) VALUES (?,?,?,?,?,?)");
-        $sth->execute(array('2', 'phil@mail.ru', 'Александр', 'Иванович', 'Быков', ''));*/
-        $sth->execute(array(NULL, $email, $FirstName, $LastName, $patronymic, $InGroup, $teacher, $stage, $registered, $pass_hash));
-        $insert_id = $db->lastInsertId();
-
-        if ($sth){
-            $smsg = "Регистрация прошла успешно";
-        } else {
-            $fsmsg = "Ошибка";
-        }
-        
-    }
-?>
-
-
 <div class="container">
     <div class="py-5 text-center">
         <img class="d-block mx-auto mb-4" src="./assets/logo.png" alt="" width="97" height="178">

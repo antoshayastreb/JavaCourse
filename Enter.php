@@ -1,3 +1,39 @@
+<?php
+session_start();
+if (count($_GET)>0){
+if($_GET['do'] == 'logout'){
+    unset($_SESSION['admin']);
+    session_destroy();
+    header("Location: Enter.php");
+}
+}
+$scMess = "";
+$flMess = "";
+require ('connect.php');
+if (isset($_POST['inputEmail']) and isset($_POST['inputPassword'])){
+    $password = $_POST['inputPassword'];
+    //$pass_hash = password_hash($password, PASSWORD_DEFAULT);
+    $sql = "SELECT * FROM jc_students WHERE `email`=:email ";
+    $sth = $db->prepare($sql);
+    $sth->bindValue(':email', $_POST['inputEmail']);
+    try {
+        $sth->execute();
+        $row = $sth->fetchAll(PDO::FETCH_ASSOC);
+        if (count($row) > 0) {
+            $pass_hash = $row[0]['pass_hash'];
+            if (password_verify($password, $pass_hash)) {
+                $scMess ="Привет, ".$row[0]['LastName']." ".$row[0]['FirstName']." ".$row[0]['patronymic'];
+                header("Location: Lesson.php");
+            } else $flMess =  'Пароль неверный!';
+
+        } else $flMess = 'Email не существует!';
+    }
+    catch (PDOException $e)
+    {
+        $flMess = 'Ошибка Базы Данных!';
+    }
+}
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -11,39 +47,7 @@
     <title>Курсы Java. Вход</title>
 </head>
 <body class="text-center">
-<?php
-    session_start();
-    $scMess = "";
-    $flMess = "";
-    require ('connect.php');
-    if (isset($_POST['inputEmail']) and isset($_POST['inputPassword'])){
-        $password = $_POST['inputPassword'];
-        //$pass_hash = password_hash($password, PASSWORD_DEFAULT);
-        $sql = "SELECT * FROM jc_students WHERE `email`=:email ";
-        $sth = $db->prepare($sql);
-        $sth->bindValue(':email', $_POST['inputEmail']);
-        try {
-            $sth->execute();
-            $row = $sth->fetchAll(PDO::FETCH_ASSOC);
-            if (count($row) > 0) {
-                $pass_hash = $row[0]['pass_hash'];
-                if (password_verify($password, $pass_hash)) {
-                    $scMess ="Привет, ".$row[0]['LastName']." ".$row[0]['FirstName']." ".$row[0]['patronymic'];
-                } else $flMess =  'Пароль неверный!';
 
-            } else $flMess = 'Email не существует!';
-        }
-        catch (PDOException $e)
-        {
-            $flMess = 'Ошибка Базы Данных!';
-        }
-
-
-
-    }
-
-
-?>
 <form class="form-signin" method="POST">
     <img class="mb-4" src="./assets/logo.png" alt="" width="97" height="178">
     <h1 class="h3 mb-3 font-weight-normal">Вход для зарегистрированных пользователей</h1>
