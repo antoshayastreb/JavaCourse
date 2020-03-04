@@ -142,7 +142,7 @@ if (isset($_POST['email']) && isset($_POST['password'])){
 
                 <hr class="mb-4">
                 <button class="btn btn-primary btn-lg btn-block" type="submit">Зарегистрироваться</button>
-                <button class="btn btn-primary btn-lg btn-block" type="button" onClick='location.href="index.php"'>Назад</button>
+                <button class="btn btn-primary btn-lg btn-block" type="button" onClick='location.href="index.php"'>На главную</button>
             </form>
 
     <?php
