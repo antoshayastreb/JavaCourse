@@ -68,6 +68,7 @@ if (isset($_POST['inputEmail']) and isset($_POST['inputPassword'])){
         </label>
     </div>
     <button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
+    <button class="btn btn-lg btn-primary btn-block" type="button" onClick='location.href="index.php"'>Назад</button>
     <p class="mt-5 mb-3 text-muted">&copy; 2020</p>
 </form>
 <?php
