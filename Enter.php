@@ -52,7 +52,9 @@
     <button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
     <p class="mt-5 mb-3 text-muted">&copy; 2020</p>
 </form>
-
+<?php
+require ('Disconnect.php');
+?>
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
