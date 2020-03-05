@@ -23,7 +23,7 @@ if (isset($_POST['email']) && isset($_POST['password'])){
 
     if ($sth){
         $smsg = "Регистрация прошла успешно";
-        header("Location: Lesson.php");
+        header("Location: LessonFrame.php");
     } else {
         $fsmsg = "Ошибка";
     }
@@ -35,7 +35,6 @@ if (isset($_POST['email']) && isset($_POST['password'])){
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Пример на bootstrap 4: Checkout - пользовательская форма заказа, показывающая компоненты формы и функции проверки. Версия v4.0.0">
     <meta name="author" content="">
     <link rel="icon" href="../../../../favicon.ico">
 

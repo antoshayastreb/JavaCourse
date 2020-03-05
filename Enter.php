@@ -22,7 +22,7 @@ if (isset($_POST['inputEmail']) and isset($_POST['inputPassword'])){
             $pass_hash = $row[0]['pass_hash'];
             if (password_verify($password, $pass_hash)) {
                 $scMess ="Привет, ".$row[0]['LastName']." ".$row[0]['FirstName']." ".$row[0]['patronymic'];
-                header("Location: Lesson.php");
+                header("Location: LessonFrame.php");
             } else $flMess =  'Пароль неверный!';
 
         } else $flMess = 'Email не существует!';
