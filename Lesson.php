@@ -1,5 +1,13 @@
 <?php
+require ('connect.php');
+$stmt = $db->prepare("select `body` from `jc_lessons` where `Stage`=?");
+$stmt->execute(array(1));
+$stmt->bindColumn(1, $lob, PDO::PARAM_LOB);
+$stmt->fetch(PDO::FETCH_BOUND);
+$pdf = base64_encode($lob);
+header("Content-type: application/pdf");
+//fpassthru($lob);
+echo $lob;
 ?>
-<hr />Это страница урока<br />
-<object><embed src="./Lessons/Lesson1.pdf" width="1280" height="1000" /></object> </br>
-<a href="Enter.php?do=logout">Выход</a>
+<!-- <object data="<?php echo $pdf ?>" type="application/pdf"></object>
+
