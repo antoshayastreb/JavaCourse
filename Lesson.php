@@ -1,4 +1,8 @@
 <?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: Enter.php");
+}
 require ('connect.php');
 $stmt = $db->prepare("select `body` from `jc_lessons` where `Stage`=?");
 $stmt->execute(array(1));

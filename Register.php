@@ -1,4 +1,5 @@
 <?php
+session_start();
 require ('connect.php');
 if (isset($_POST['email']) && isset($_POST['password'])){
     $email = $_POST['email'];
@@ -23,7 +24,21 @@ if (isset($_POST['email']) && isset($_POST['password'])){
 
     if ($sth){
         $smsg = "Регистрация прошла успешно";
-        header("Location: LessonFrame.php");
+        $sql = "SELECT * FROM jc_students WHERE `email`=:email ";
+        $sth = $db->prepare($sql);
+        $sth->bindValue(':email', $email);
+        try {
+            $sth->execute();
+            $row = $sth->fetchAll(PDO::FETCH_ASSOC);
+            if (count($row) > 0) {
+               $_SESSION['user_id'] = $row[0]['ID'];
+               header("Location: LessonFrame.php");
+            } else $flMess = 'Email не существует!';
+        }
+        catch (PDOException $e)
+        {
+            $flMess = 'Ошибка Базы Данных!';
+        }
     } else {
         $fsmsg = "Ошибка";
     }
