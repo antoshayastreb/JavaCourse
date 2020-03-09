@@ -15,7 +15,7 @@
     <header class="masthead mb-auto">
         <div class="inner">
             <nav class="nav nav-masthead justify-content-center">
-                <a class="nav-link active" href="#">Преподавателям</a>
+                <a class="nav-link active" href="TeacherEnter.php">Преподавателям</a>
             </nav>
         </div>
     </header>
