@@ -40,4 +40,6 @@ if (isset($_GET['LoadPDFName'])) {
 <?php
 require ('Disconnect.php');
 ?>
+<input type="file" id="input" onchange="handleFiles(this.files)">
+
 </body>
