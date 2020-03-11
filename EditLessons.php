@@ -73,20 +73,6 @@ if (!empty($_FILES)) { // Проверяем пришли ли файлы от �
         if ( array_key_exists('stage',$_SESSION)) {
             $NewStage = $_SESSION['stage'];
             try {
-                /*UPDATE `jc_lessons` SET `Stage` = '4', `UpLoadDate` = CURRENT_TIME() WHERE `jc_lessons`.`ID` = 3
-                $sql = "UPDATE `jc_lessons` SET `UpLoadDate` =  CURRENT_TIME(), `body` = ?  WHERE `Stage`=?";*/
-                /*$sth = $db->prepare("UPDATE `jc_lessons` SET `body` = :body, `UpLoadDate` = :DT WHERE `Stage` = :Stage");
-                $fp = fopen($targetFile, 'rb');
-                $DT = date("Y-m-d H:i:s");
-                $sth->execute(array('body' => $fp, 'DT' => $DT, 'Stage' => $NewStage));*/
-                /*$sth = $db->prepare($sql);
-                $sth->bindParam(1, $fp, PDO::PARAM_LOB);
-                $sth->bindParam(4, $NewStage);
-                $db->beginTransaction();
-                $sth->execute();
-                $db->commit();*/
-                $id=null;
-                $HomeWork=0;
                 $DT = date("Y-m-d H:i:s");
                 $sql = "UPDATE `jc_lessons` SET `body` = ?, `UpLoadDate` = ?  WHERE `Stage`=?";
                 $stmt = $db->prepare($sql);
