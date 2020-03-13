@@ -25,7 +25,7 @@ if (count($_GET)>0) {
                 $FileUploading = true;
                 $DT = date("Y-m-d H:i:s");
                 try {
-                    $sql="INSERT INTO `jc_lessons` (`ID`, `Stage`, `body`, `UpLoadDate`) VALUES (?,?,?,?)";
+                    $sql="INSERT INTO jc_lessons (`ID`, `Stage`, `body`, `UpLoadDate`) VALUES (?,?,?,?)";
                     $sth = $db->prepare($sql);
                     $sth->execute(array(NULL, $NewStage, 'PDF - файл не загружен', $DT));
                     $insert_id = $db->lastInsertId();
