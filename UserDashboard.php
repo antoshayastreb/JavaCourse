@@ -3,6 +3,7 @@
     $ds = DIRECTORY_SEPARATOR;
     $LoadFile = false;
     $storeFolder = 'uploads'; // Указываем папку для загрузки
+    $UDMode = 0;
     if (!isset($_SESSION['user_id'])) {
         header("Location: Enter.php");
     }
@@ -43,6 +44,10 @@
                     }
                     header("Location: UserDashboard.php");
                 }
+            }
+            //редактировать профиль
+            if ($_GET['do'] == 'UDEditProfile'){
+                $UDMode = 1;
             }
         }
     }
@@ -132,33 +137,9 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <span data-feather="file"></span>
-                            Orders
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <span data-feather="shopping-cart"></span>
-                            Products
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="UserDashboard.php?do=UDEditProfile">
                             <span data-feather="users"></span>
-                            Customers
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <span data-feather="bar-chart-2"></span>
-                            Reports
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <span data-feather="layers"></span>
-                            Integrations
+                            Ваш профиль
                         </a>
                     </li>
                 </ul>
