@@ -24,7 +24,7 @@ if (isset($_POST['inputEmail']) and isset($_POST['inputPassword'])){
             if (password_verify($password, $pass_hash)) {
                 $scMess ="Привет, ".$row[0]['LastName']." ".$row[0]['FirstName']." ".$row[0]['patronymic'];
                 $_SESSION['user_id'] = $row[0]['ID'];
-                header("Location: LessonFrame.php");
+                header("Location: UserDashboard.php");
             } else $flMess =  'Пароль неверный!';
 
         } else $flMess = 'Email не существует!';

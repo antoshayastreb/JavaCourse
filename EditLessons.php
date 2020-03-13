@@ -99,7 +99,6 @@ if (!empty($_FILES)) { // Проверяем пришли ли файлы от �
         print("<link href=\"css/dropzone.css\" type=\"text/css\" rel=\"stylesheet\" />
                 <script src=\"js/dropzone.js\"></script>
                 <script>
-                    //настройка
                     Dropzone.options.pdfdropzone = {
                         maxFiles: 1, //за раз грузить  только один файл
                         accept: function(file, done) {

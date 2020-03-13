@@ -32,7 +32,7 @@ if (isset($_POST['email']) && isset($_POST['password'])){
             $row = $sth->fetchAll(PDO::FETCH_ASSOC);
             if (count($row) > 0) {
                $_SESSION['user_id'] = $row[0]['ID'];
-               header("Location: LessonFrame.php");
+               header("Location: UserDashboard.php");
             } else $flMess = 'Email не существует!';
         }
         catch (PDOException $e)
