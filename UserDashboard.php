@@ -147,17 +147,20 @@
         </nav>
 
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-                <?php echo "<h1 class=\"h2\">".$scMess."</h1>"; ?>
-                <div class="btn-toolbar mb-2 mb-md-0">
-                    <div class="btn-group mr-2">
-                        <button class="btn btn-sm btn-outline-secondary">Предыдущий</button>
-                        <button class="btn btn-sm btn-outline-secondary">Следующий</button>
-                    </div>
-                </div>
-            </div>
-            <object align="absmiddle"><embed src="Lesson.php" width=1280  height="700"/></object>
             <?php
+            if($UDMode) {
+                //редактор профиля
+            }else{
+                echo "<div class=\"d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom\">\n";
+                echo "<h1 class=\"h2\">".$scMess."</h1>\n";
+                echo "    <div class=\"btn-toolbar mb-2 mb-md-0\">\n";
+                echo "        <div class=\"btn-group mr-2\">\n";
+                echo "            <button class=\"btn btn-sm btn-outline-secondary\">Предыдущий</button>\n";
+                echo "            <button class=\"btn btn-sm btn-outline-secondary\">Следующий</button>\n";
+                echo "        </div>\n";
+                echo "    </div>\n";
+                echo "</div>\n";
+                echo "<object align=\"absmiddle\"><embed src=\"Lesson.php\" width=1280  height=\"700\"/></object>\n";
                 $sql = "SELECT * FROM jc_homeworks WHERE `user_id`=:ID AND `stage`=:stage";
                 $sth = $db->prepare($sql);
                 $sth->bindValue(':ID', $ID);
@@ -190,6 +193,7 @@
                 } catch (PDOException $e) {
                     $flMess = 'Ошибка Базы Данных!';
                 }
+            }
             ?>
         </main>
     </div>
