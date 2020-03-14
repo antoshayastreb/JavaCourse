@@ -3,8 +3,8 @@ session_start();
 if ((count($_GET)>0) && array_key_exists('do',$_GET)){
 if($_GET['do'] == 'logout'){
     session_destroy();
-    unset($_SESSION['user_id']);
-    header("Location: Enter.php");
+    unset($_SESSION['teach_id']);
+    header("Location: TeacherEnter.php");
 }
 }
 $scMess = "";
@@ -23,7 +23,7 @@ if (isset($_POST['inputEmail']) and isset($_POST['inputPassword'])){
             $pass_hash = $row[0]['pass_hash'];
             if (password_verify($password, $pass_hash)) {
                 $scMess ="Привет, ".$row[0]['LastName']." ".$row[0]['FirstName']." ".$row[0]['patronymic'];
-                $_SESSION['user_id'] = $row[0]['ID'];
+                $_SESSION['teach_id'] = $row[0]['ID'];
                 header("Location: TeacherDashboard.php");
             } else $flMess =  'Пароль неверный!';
 

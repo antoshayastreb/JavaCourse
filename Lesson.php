@@ -1,8 +1,16 @@
 <?php
 session_start();
-/*if (!isset($_SESSION['user_id'])) {
-    header("Location: Enter.php");
-}*/
+if (array_key_exists('user_id',$_SESSION)) {
+    if (!isset($_SESSION['user_id'])) {
+        header("Location: Enter.php");
+    }
+}elseif (array_key_exists('teach_id',$_SESSION)){
+    if (!isset($_SESSION['teach_id'])) {
+        header("Location: TeacherEnter.php");
+    }
+}else{
+        header("Location: Enter.php");
+    }
 if ( array_key_exists('stage',$_SESSION)){
     $ThisStage = $_SESSION['stage'];
     if ($ThisStage) {
