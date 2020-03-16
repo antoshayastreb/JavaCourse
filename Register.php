@@ -152,7 +152,20 @@ if (isset($_POST['email']) && isset($_POST['password'])){
                             </div>
                         </div>
                 </div>
+                <hr class="mb-4">
 
+                <div class="checkbox mb-3">
+                    <label>
+                        <input type="checkbox" name="personalInfo" value="personalInfo" required> Я поддтверждаю согласие на обработку персональных данных в соотвествии с федеральным законом
+                        <a href="https://b-152.ru/152-FZ_O_personalnykh_dannykh" target="_blank">№152-ФЗ «О персональных данных»</a>.
+                        <div class="invalid-feedback">
+                            Необходимо согласие.
+                        </div>
+                    </label>
+                    <label>
+                        <input type="checkbox" name="subscription" value="subscription"> Хочу получать рекламную рассылку.
+                    </label>
+                </div>
 
                 <hr class="mb-4">
                 <button class="btn btn-primary btn-lg btn-block" type="submit">Зарегистрироваться</button>
@@ -168,8 +181,8 @@ if (isset($_POST['email']) && isset($_POST['password'])){
 </div>
 
 <!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster
+==================================================
+   Placed at the end of the document so the pages load faster-->
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script>window.jQuery || document.write('<script src="/docs/4.0/assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
 <script src="/docs/4.0/assets/js/vendor/popper.min.js"></script>
@@ -196,6 +209,6 @@ if (isset($_POST['email']) && isset($_POST['password'])){
             });
         }, false);
     })();
-</script>-->
+</script>
 </body>
 </html>
