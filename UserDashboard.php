@@ -11,6 +11,7 @@
     $scMess = "";
     $flMess = "";
     $ThisStage = 0;
+    $MaxStage = 0;
     $ID = $_SESSION['user_id'];
     $sql = "SELECT * FROM jc_students WHERE `ID`=:ID ";
     $sth = $db->prepare($sql);
@@ -19,8 +20,9 @@
         $sth->execute();
         $row = $sth->fetchAll(PDO::FETCH_ASSOC);
         if (count($row) > 0) {
-           $scMess ="Здравствуйте, ".$row[0]['LastName']." ".$row[0]['FirstName']." ".$row[0]['patronymic'];
+           $scMess ="Здравствуйте, ".$row[0]['LastName']." ".$row[0]['FirstName']." ".$row[0]['patronymic'].".";
            $ThisStage = $row[0]['stage'];
+           $MaxStage = $ThisStage;
            $_SESSION['stage'] = $ThisStage;
         }
     }
@@ -49,6 +51,26 @@
             if ($_GET['do'] == 'UDEditProfile'){
                 $UDMode = 1;
             }
+            //Предыдущий урок
+            if (($_GET['do'] == 'UDPrevLesson')){
+                if (array_key_exists('stage', $_GET)) {
+                    $ThisStage = $_GET['stage'];
+                    if ($ThisStage > 1){
+                        $ThisStage--;
+                        $_SESSION['stage'] = $ThisStage;
+                    }
+                }
+            }
+            //следующий урок
+            if (($_GET['do'] == 'UDNextLesson')){
+                if (array_key_exists('stage', $_GET)) {
+                    $ThisStage = $_GET['stage'];
+                    if ($ThisStage < $MaxStage){
+                        $ThisStage++;
+                        $_SESSION['stage'] = $ThisStage;
+                    }
+                }
+            }
         }
     }
     if (!empty($_FILES)) { // Проверяем пришли ли файлы от клиента
@@ -74,6 +96,7 @@
                     $db->beginTransaction();
                     $stmt->execute();
                     $db->commit();
+                    fclose($fp);
                     $LoadFile = true;
                 } catch (PDOException $e) {
                     $flMess = 'Ошибка Базы Данных!';
@@ -152,11 +175,11 @@
                 //редактор профиля
             }else{
                 echo "<div class=\"d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom\">\n";
-                echo "<h1 class=\"h2\">".$scMess."</h1>\n";
+                echo "<h1 class=\"h2\">".$scMess." Это урок № ".$ThisStage."</h1>\n";
                 echo "    <div class=\"btn-toolbar mb-2 mb-md-0\">\n";
                 echo "        <div class=\"btn-group mr-2\">\n";
-                echo "            <button class=\"btn btn-sm btn-outline-secondary\">Предыдущий</button>\n";
-                echo "            <button class=\"btn btn-sm btn-outline-secondary\">Следующий</button>\n";
+                echo "            <button class=\"btn btn-sm btn-outline-secondary\" onClick='location.href=\"UserDashboard.php?do=UDPrevLesson&stage=" . $ThisStage . "\"'>Предыдущий</button>\n";
+                echo "            <button class=\"btn btn-sm btn-outline-secondary\" onClick='location.href=\"UserDashboard.php?do=UDPNextLesson&stage=" . $ThisStage . "\"'>Следующий</button>\n";
                 echo "        </div>\n";
                 echo "    </div>\n";
                 echo "</div>\n";
@@ -169,12 +192,12 @@
                     $sth->execute();
                     $row = $sth->fetchAll(PDO::FETCH_ASSOC);
                     if (count($row) == 0) {
-                        echo "<h3 class=\"h3\"> Для загрузки архива домашнего задания (в формете *zip или *.7z) используйте форму ниже. </h3>";
+                        echo "<h3 class=\"h3\"> Для загрузки архива домашнего задания (в формете *zip) используйте форму ниже. </h3>";
                         Print("<form action=\"UserDashboard.php\" class=\"dropzone\" id=\"zipdropzone\"></form>\n");
                         print("<script>
                     Dropzone.options.zipdropzone = {
                         maxFiles: 1, //за раз грузить  только один файл
-                        acceptedFiles: \".zip,.7z\",
+                        acceptedFiles: \".zip\",
                     };
                 </script>\n");
                     } else {

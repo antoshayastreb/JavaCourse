@@ -8,6 +8,7 @@
     $storeFolder = 'uploads'; // Указываем папку для загрузки
     $FileUploading = false;
     $TDMode = 0;
+    $currentGroup = 0;
     require('connect.php');
     $scMess = "";
     $flMess = "";
@@ -86,7 +87,77 @@
 
                 }
             }
+            //Продвинуть студента по урокам вперед
+            if($_GET['do'] == 'TDSDAddStage'){
+                if ( array_key_exists('user_id',$_GET)) {
+                    $ThisID = $_GET['user_id'];
+                    try {
+                        $sth = $db->prepare("SELECT * FROM jc_students WHERE `ID`=?");
+                        $sth->execute(array($ThisID));
+                        $array = $sth->fetchAll(PDO::FETCH_ASSOC);
+                        if (count($array) == 1) {
+                            $ThisStage = $array [0]['stage'];
+                            $Chk=1;
+                            $sth = $db->prepare("UPDATE jc_homeworks SET `checked` = ?  WHERE `user_id`=? AND `stage`=?");
+                            $sth->execute(array($Chk, $ThisID, $ThisStage));
+                            $ThisStage++;
+                            $sth = $db->prepare("UPDATE jc_students SET `stage` = ?  WHERE `ID`=?");
+                            $sth->execute(array($ThisStage, $ThisID));
+                        }
+                    } catch (PDOException $e) {
+                        $flMess = 'Ошибка Базы Данных!';
+                    }
+                }
+                if ( array_key_exists('InGroup',$_GET)) {
+                    $currentGroup =  $_GET['InGroup'];
+                    }
+            }
+            //скачать ДЗ
+            if($_GET['do'] == 'TDSDDownload'){
+                if ( array_key_exists('user_id',$_GET)) {
+                    $ThisID = $_GET['user_id'];
+                    if (array_key_exists('stage', $_GET)) {
+                        $ThisStage = $_GET['stage'];
+                        if (array_key_exists('InGroup', $_GET)) {
+                            $currentGroup = $_GET['InGroup'];
+                            // сбрасываем буфер вывода PHP, чтобы избежать переполнения памяти выделенной под скрипт
+                            // если этого не сделать файл будет читаться в память полностью!
+                            if (ob_get_level()) {
+                                ob_end_clean();
+                            }
+                            $sth = $db->prepare("SELECT * FROM jc_students WHERE `ID`=?");
+                            $sth->execute(array($ThisID));
+                            $array = $sth->fetchAll(PDO::FETCH_ASSOC);
+                            $svFileName = "ДЗ.zip";
+                            if (count($array)) {
+                                $svFileName = $array[0]['LastName']."_".$array[0]['FirstName']."_Урок № ".$ThisStage.".zip";
+                                }
+                            $sth = $db->prepare("SELECT `body` FROM jc_homeworks  WHERE `user_id`=? AND `stage`=?");
+                            $sth->execute(array($ThisID,$ThisStage));
+                            $sth->bindColumn(1, $lob, PDO::PARAM_LOB);
+                            $sth->fetch(PDO::FETCH_BOUND);
+                            $FileSize = strlen($lob);
+                            // заставляем браузер показать окно сохранения файла
+                            header('Content-Description: File Transfer');
+                            header('Content-Type: application/octet-stream');
+                            header('Content-Disposition: attachment; filename=' . basename($svFileName));
+                            header('Content-Transfer-Encoding: binary');
+                            header('Expires: 0');
+                            header('Cache-Control: must-revalidate');
+                            header('Pragma: public');
+                            header('Content-Length: '.$FileSize);
+                            // читаем файл и отправляем его пользователю
+                            echo $lob;
+                        }
+                    }
+                }
+            }
+        }
 
+    }
+    if (count($_POST)>0) {
+        if ( array_key_exists('csGroup',$_POST)) {
+            $currentGroup = $_POST['csGroup'];
         }
     }
         if (!empty($_FILES)) { // Проверяем пришли ли файлы от клиента
@@ -109,11 +180,11 @@
                         $db->beginTransaction();
                         $stmt->execute();
                         $db->commit();
+                        fclose($fp);
                     } catch (PDOException $e) {
                         $flMess = 'Ошибка Базы Данных!';
                     }
                 }
-
             }
     }
 ?>
@@ -300,6 +371,80 @@
 
             } else {
                 //студенты
+                echo "<form method=\"POST\" action=\"\">\n";
+                echo "<h4>Ваши студенты из группы:</h4>";
+                echo "<select class=\"custom-select d-block w-100\" name=\"csGroup\" required>\n";
+                $sth = $db->prepare("SELECT * FROM jc_groups ORDER BY `ID` DESC");
+                $sth->execute();
+                $array = $sth->fetchAll(PDO::FETCH_ASSOC);
+                if ($currentGroup == 0) {
+                    $currentGroup = $array[0]['ID'];
+                    foreach ($array as $key => $value) {
+                        print "  <option value=\"$value[ID]\">$value[Name]</option>\n";
+                    }
+                }else{
+                    foreach ($array as $key => $value) {
+                        if ($value['ID'] == $currentGroup){
+                            echo "   <option value=\"$value[ID]\">$value[Name]</option>\n";
+                            break;
+                        }
+                    }
+                    foreach ($array as $key => $value) {
+                        if ($value['ID'] != $currentGroup){
+                            print "  <option value=\"$value[ID]\">$value[Name]</option>\n";
+                        }
+                    }
+                }
+
+                echo "</select>\n";
+                echo "<button class=\"btn btn-primary btn-lg btn-block\" type=\"submit\">Показать</button>";
+                echo "</form>\n";
+                $sth = $db->prepare("SELECT * FROM jc_students WHERE `InGroup`=?");
+                $sth->execute(array($currentGroup));
+                $array = $sth->fetchAll(PDO::FETCH_ASSOC);
+                $counter = 1;
+                echo "<div class=\"table-responsive\">\n";
+                echo "    <table class=\"table table-striped table-sm\">\n";
+                echo "        <thead>\n";
+                echo "        <tr>\n";
+                echo "            <th>№ п./п.</th>\n";
+                echo "            <th>Фамилия</th>\n";
+                echo "            <th>Имя</th>\n";
+                echo "            <th>Отчество</th>\n";
+                echo "            <th>Номер урока</th>\n";
+                echo "            <th>Домашнее задание (архив)</th>\n";
+                echo "            <th>Проверить</th>\n";
+                echo "        </tr>\n";
+                echo "        </thead>\n";
+                echo "        <tbody>\n";
+                if (count($array)) {
+                    foreach ($array as $key => $value) {
+                        $tmpSql = $db->prepare("SELECT * FROM jc_homeworks WHERE `user_id`=? AND `stage`=? ORDER BY `uploaded` DESC");
+                        $tmpSql->execute(array($value['ID'], $value['stage']));
+                        $tmpArr = $tmpSql->fetchAll(PDO::FETCH_ASSOC);
+                        echo "        <tr>\n";
+                        echo "            <td>" . $counter . "</td>\n";
+                        echo "            <td>" . $value['LastName'] . "</td>\n";
+                        echo "            <td>" . $value['FirstName'] . "</td>\n";
+                        echo "            <td>" . $value['patronymic'] . "</td>\n";
+                        echo "            <td>" . $value['stage'] . "</td>\n";
+                        if (count($tmpArr) == 0) {
+                            echo "            <td>Не загружено </td>\n";
+                            echo "            <td> Проверка недоступна</td>\n";
+                        }else{
+                            echo "            <td><a href=\"TeacherDashboard.php?do=TDSDDownload&user_id=" . $value['ID'] . "&stage=".$value['stage']. "&InGroup=".$value['InGroup']."\">Скачать</a> (Загружено: ".$tmpArr[0]['uploaded'].")</td>\n";
+                            if ($tmpArr[0]['checked'] == "1") {
+                                echo "            <td>Проверено</td>\n";
+                            }else{
+                                echo "            <td><a href=\"TeacherDashboard.php?do=TDSDAddStage&user_id=" . $value['ID'] . "&InGroup=".$value['InGroup']."\">Установить статус \"Проверено\"</a></td>\n";
+                            }
+                        }
+                        echo "        </tr>\n";
+                        $counter++;
+                    }
+                }
+                echo "    </table>";
+                echo"</div>\n";
             }
             ?>
         </main>
