@@ -234,10 +234,34 @@
                 {
                     $flMess = 'Ошибка Базы Данных!';
                 }
+                echo "</select>";
                 echo "</div>";
                 echo "<div class=\"col-md-4 mb-3\">";
                 echo "<label>Группа</label>";
-                echo "<select class=\"custom-select d-block w-100\" id=\"InGroup\" value=\"$lastName\">";
+                echo "<select class=\"custom-select d-block w-100\" id=\"InGroup\">";
+                $sqlgroup = "SELECT * FROM jc_groups WHERE `ID`=:ID ";
+                $sth = $db->prepare($sqlgroup);
+                $sth->bindValue(':ID', $ingroup);
+                try {
+                    $sth->execute();
+                    $array = $sth->fetchAll(PDO::FETCH_ASSOC);
+                    foreach ($array as $key => $value) {
+                        print "<option value=\"$value[ID]\">$value[Name]</option>";
+                    }
+                    $sth = $db->prepare("SELECT * FROM jc_groups");
+                    $sth->execute();
+                    $array = $sth->fetchAll(PDO::FETCH_ASSOC);
+                    foreach ($array as $key => $value) {
+                        if ($value[ID]!= $ingroup){
+                            print "<option value=\"$value[ID]\">$value[Name]</option>";
+                        }
+                    }
+                }
+                catch (PDOException $e)
+                {
+                    $flMess = 'Ошибка Базы Данных!';
+                }
+                echo "</select>";
                 echo "</div>";
                 echo "</div>";
                 //Надо бы проверять хэши пароля и при несовпадении выдавать ошибку.
