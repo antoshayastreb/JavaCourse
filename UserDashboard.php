@@ -234,25 +234,26 @@
                 {
                     $flMess = 'Ошибка Базы Данных!';
                 }
+                echo "</select>";
                 echo "</div>";
                 echo "<div class=\"col-md-4 mb-3\">";
                 echo "<label>Группа</label>";
                 echo "<select class=\"custom-select d-block w-100\" id=\"InGroup\">";
-                $sqlteacher = "SELECT * FROM jc_teachers WHERE `ID`=:ID ";
-                $sth = $db->prepare($sqlteacher);
-                $sth->bindValue(':ID', $teacher);
+                $sqlgroup = "SELECT * FROM jc_groups WHERE `ID`=:ID ";
+                $sth = $db->prepare($sqlgroup);
+                $sth->bindValue(':ID', $ingroup);
                 try {
                     $sth->execute();
                     $array = $sth->fetchAll(PDO::FETCH_ASSOC);
                     foreach ($array as $key => $value) {
-                        print "<option value=\"$value[ID]\">$value[FirstName] $value[patronymic] $value[LastName] </option>";
+                        print "<option value=\"$value[ID]\">$value[Name]</option>";
                     }
-                    $sth = $db->prepare("SELECT * FROM jc_teachers");
+                    $sth = $db->prepare("SELECT * FROM jc_groups");
                     $sth->execute();
                     $array = $sth->fetchAll(PDO::FETCH_ASSOC);
                     foreach ($array as $key => $value) {
-                        if ($value[ID]!= $teacher){
-                            print "<option value=\"$value[ID]\">$value[FirstName] $value[patronymic] $value[LastName] </option>";
+                        if ($value[ID]!= $ingroup){
+                            print "<option value=\"$value[ID]\">$value[Name]</option>";
                         }
                     }
                 }
@@ -260,6 +261,7 @@
                 {
                     $flMess = 'Ошибка Базы Данных!';
                 }
+                echo "</select>";
                 echo "</div>";
                 echo "</div>";
                 //Надо бы проверять хэши пароля и при несовпадении выдавать ошибку.
