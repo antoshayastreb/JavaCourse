@@ -162,9 +162,6 @@ if (isset($_POST['email']) && isset($_POST['password'])){
                             Необходимо согласие.
                         </div>
                     </label>
-                    <label>
-                        <input type="checkbox" name="subscription" value="subscription"> Хочу получать рекламную рассылку.
-                    </label>
                 </div>
 
                 <hr class="mb-4">
