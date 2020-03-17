@@ -225,7 +225,7 @@
                     $sth->execute();
                     $array = $sth->fetchAll(PDO::FETCH_ASSOC);
                     foreach ($array as $key => $value) {
-                        if ($value[ID]!= Steacher){
+                        if ($value[ID]!= $teacher){
                             print "<option value=\"$value[ID]\">$value[FirstName] $value[patronymic] $value[LastName] </option>";
                         }
                     }
