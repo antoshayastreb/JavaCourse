@@ -152,12 +152,43 @@
                     }
                 }
             }
+            if($_GET['do'] == 'TDEGview'){
+                //редактор групп - просмотр
+                $TDMode = 1;
+            }
+            if($_GET['do'] == 'TDEGdelete'){
+                //редактор групп - удаление группы
+                $TDMode = 1;
+                if ( array_key_exists('id',$_GET)) {
+                    $ThisID = $_GET['id'];
+                    try {
+                        $sql="DELETE FROM `jc_groups` WHERE `ID`=?";
+                        $sth = $db->prepare($sql);
+                        $sth->execute(array($ThisID));
+                    } catch(PDOException $e){
+                        $flMess = 'Ошибка Базы Данных!';
+                    }
+                    header("Location: TeacherDashboard.php?do=TDEGview");
+                }
+            }
         }
 
     }
     if (count($_POST)>0) {
         if ( array_key_exists('csGroup',$_POST)) {
             $currentGroup = $_POST['csGroup'];
+        }
+        if ( array_key_exists('newGroup',$_POST)) {
+            $NewGroup = $_POST['newGroup'];
+            try {
+                $sql="INSERT INTO jc_groups (`ID`, `Name`) VALUES (?,?)";
+                $sth = $db->prepare($sql);
+                $sth->execute(array(NULL, $NewGroup));
+                $insert_id = $db->lastInsertId();
+            } catch(PDOException $e){
+                $flMess = 'Ошибка Базы Данных!';
+            }
+            header("Location: TeacherDashboard.php?do=TDEGview");
         }
     }
         if (!empty($_FILES)) { // Проверяем пришли ли файлы от клиента
@@ -285,6 +316,36 @@
             <?php
             if ($TDMode == 1) {
                 //учебные группы
+                echo "<form method=\"POST\" action=\"\">\n";
+                echo "<h4>Редактор учебных групп:</h4>";
+                echo "<label for=\"newGroup\">Добавить новую группу</label>";
+                echo "    <input type=\"text\" class=\"form-control\" name=\"newGroup\" placeholder=\"\" value=\"\" required>";
+                echo "    <button class=\"btn btn-primary btn-lg btn-block\" type=\"submit\">Добавить</button>";
+                echo "</form>\n";
+                $sth = $db->prepare("SELECT * FROM jc_groups ORDER BY `ID` DESC");
+                $sth->execute();
+                $array = $sth->fetchAll(PDO::FETCH_ASSOC);
+                $counter = 1;
+                echo "<div class=\"table-responsive\">\n";
+                echo "    <table class=\"table table-striped table-sm\">\n";
+                echo "        <thead>\n";
+                echo "        <tr>\n";
+                echo "            <th>№ п./п.</th>\n";
+                echo "            <th>Код группы</th>\n";
+                echo "            <th>Действие</th>\n";
+                echo "        </tr>\n";
+                echo "        </thead>\n";
+                echo "        <tbody>\n";
+                if (count($array)) {
+                    foreach ($array as $key => $value) {
+                        echo "        <tr>\n";
+                        echo "            <td>" . $counter . "</td>\n";
+                        echo "            <td>" . $value['Name'] . "</td>\n";
+                        echo "            <td><a href=\"TeacherDashboard.php?do=TDEGdelete&id=".$value['ID']."\">Удалить </a></td>\n";
+                        echo "        </tr>\n";
+                        $counter++;
+                    }
+                }
             } elseif ($TDMode == 2) {
                 //редактор уроков
                 if ($FileUploading) {
