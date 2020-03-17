@@ -10,6 +10,8 @@
     require('connect.php');
     $scMess = "";
     $flMess = "";
+    $lastName = "";
+    $fistName = "";
     $ThisStage = 0;
     $MaxStage = 0;
     $ID = $_SESSION['user_id'];
@@ -20,6 +22,7 @@
         $sth->execute();
         $row = $sth->fetchAll(PDO::FETCH_ASSOC);
         if (count($row) > 0) {
+           $fistName = $row[0]['FirstName'];
            $scMess ="Здравствуйте, ".$row[0]['LastName']." ".$row[0]['FirstName']." ".$row[0]['patronymic'].".";
            $ThisStage = $row[0]['stage'];
            $MaxStage = $ThisStage;
@@ -119,7 +122,6 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="dashboard.css" rel="stylesheet">
     <link href="css/dropzone.css" type="text/css" rel="stylesheet" />
     <script src="js/dropzone.js"></script>
 </head>
@@ -171,8 +173,17 @@
 
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
             <?php
-            if($UDMode) {
+            if($UDMode == 1) {
                 //редактор профиля
+                $sql = "SELECT * FROM jc_students WHERE `ID`=:ID ";
+                echo "<form>";
+                echo "<div class=\"form-row\">";
+                echo "<div class=\"col-md-4 mb-3\">";
+                echo "<label>Имя</label>";
+                echo "<input type=\"text\" class=\"form-control\" id=\"fistName\" value=\"$fistName\">";
+                echo "</div>";
+                echo "</div>";
+                echo "</form>";
             }else{
                 echo "<div class=\"d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom\">\n";
                 echo "<h1 class=\"h2\">".$scMess." Это урок № ".$ThisStage."</h1>\n";
