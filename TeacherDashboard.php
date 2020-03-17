@@ -3,6 +3,7 @@
     if (!isset($_SESSION['teach_id'])) {
         header("Location: TeacherEnter.php");
     }
+    $DeletingGroupID = 0;
     $ds = DIRECTORY_SEPARATOR;
     $LoadFile = false;
     $storeFolder = 'uploads'; // Указываем папку для загрузки
@@ -171,6 +172,9 @@
                     header("Location: TeacherDashboard.php?do=TDEGview");
                 }
             }
+            if($_GET['do'] == 'TDEPshow'){
+                $TDMode = 3;
+            }
         }
 
     }
@@ -229,6 +233,7 @@
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> -->
     <?php
     if ($TDMode == 2){
         if ($FileUploading){
@@ -242,8 +247,6 @@
 </head>
 
 <body>
-
-
 <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
     <a class="navbar-brand" href="#">Top navbar</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -293,7 +296,7 @@
                             <span data-feather="layers"></span>
                             Integrations
                         </a>
-                    </li> --!>
+                    </li> -->
                     <li class="nav-item">
                         <a class="nav-link" href="TeacherDashboard.php?do=TDEPshow">
                             <span data-feather="file"></span>
@@ -303,7 +306,6 @@
                 </ul>
             </div>
         </nav>
-
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
                 <?php if (strlen($flMess) > 0){
@@ -313,6 +315,7 @@
                 }
                 ?>
             </div>
+
             <?php
             if ($TDMode == 1) {
                 //учебные группы
@@ -341,7 +344,8 @@
                         echo "        <tr>\n";
                         echo "            <td>" . $counter . "</td>\n";
                         echo "            <td>" . $value['Name'] . "</td>\n";
-                        echo "            <td><a href=\"TeacherDashboard.php?do=TDEGdelete&id=".$value['ID']."\">Удалить </a></td>\n";
+                        //echo "            <td><a href=\"TeacherDashboard.php?do=TDEGdelete&id=".$value['ID']."\">Удалить </a></td>\n";
+                        echo  "            <td><button type=\"button\" class=\"btn btn-primary\" data-toggle=\"modal\" data-target=\"#staticBackdrop\" data-content=\"Содержимое 1...\">Удалить</button></td>\n";
                         echo "        </tr>\n";
                         $counter++;
                     }
@@ -430,7 +434,9 @@
                     print("</div>\n");
                 }
 
-            } else {
+            } elseif($TDMode == 3) {
+                //require ("ModalWin.php");
+            }else{
                 //студенты
                 echo "<form method=\"POST\" action=\"\">\n";
                 echo "<h4>Ваши студенты из группы:</h4>";
@@ -508,27 +514,48 @@
                 echo"</div>\n";
             }
             ?>
+            <!-- Modal -->
+            <div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Запрос на удаление группы</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p id="content"></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Отказаться</button>
+                            <button type="button" class="btn btn-primary">Удалить</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                // при открытии модального окна
+                $('#staticBackdrop').on('show.bs.modal', function (event) {
+                    // получить кнопку, которая его открыло
+                    var button = $(event.relatedTarget)
+                    // извлечь информацию из атрибута data-content
+                    var content = button.data('content')
+                    // вывести эту информацию в элемент, имеющий id="content"
+                    $(this).find('#content').text(content);
+                })
+            </script>
         </main>
-    </div>
-</div>
 
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script>window.jQuery || document.write('<script src="../../../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
-<script src="../../../../assets/js/vendor/popper.min.js"></script>
-<script src="../../../../dist/js/bootstrap.min.js"></script>
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+        <script>
+            feather.replace()
+        </script>
 
-<!-- Icons -->
-<script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
-<script>
-    feather.replace()
-</script>
-
-
-<?php
-    require ('Disconnect.php');
-?>
 </body>
 </html>
