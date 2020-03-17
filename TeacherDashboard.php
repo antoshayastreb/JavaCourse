@@ -172,6 +172,13 @@
                     header("Location: TeacherDashboard.php?do=TDEGview");
                 }
             }
+            if($_GET['do'] == 'TDEGdelConf'){
+                //редактор групп - запрос на удаление группы
+                $TDMode = 11;
+                if ( array_key_exists('id',$_GET)) {
+                    $ThisID = $_GET['id'];
+                }
+            }
             if($_GET['do'] == 'TDEPshow'){
                 $TDMode = 3;
             }
@@ -344,12 +351,29 @@
                         echo "        <tr>\n";
                         echo "            <td>" . $counter . "</td>\n";
                         echo "            <td>" . $value['Name'] . "</td>\n";
-                        //echo "            <td><a href=\"TeacherDashboard.php?do=TDEGdelete&id=".$value['ID']."\">Удалить </a></td>\n";
-                        echo  "            <td><button type=\"button\" class=\"btn btn-primary\" data-toggle=\"modal\" data-target=\"#staticBackdrop\" data-content=\"Содержимое 1...\">Удалить</button></td>\n";
+                        echo "            <td><a href=\"TeacherDashboard.php?do=TDEGdelConf&id=".$value['ID']."\">Удалить </a></td>\n";
+                        //echo  "            <td><button type=\"button\" class=\"btn btn-primary\" data-toggle=\"modal\" data-target=\"#staticBackdrop\">Удалить</button></td>\n";
                         echo "        </tr>\n";
                         $counter++;
                     }
                 }
+            }elseif ($TDMode == 11){
+            echo"<div class=\"modal fade\" id=\"staticBackdrop\" data-backdrop=\"static\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"staticBackdropLabel\" aria-hidden=\"true\">\n";
+            echo "   <div class=\"modal-dialog\" role=\"document\">\n";
+            echo"        <div class=\"modal-content\">\n";
+            echo "           <div class=\"modal-header\">\n";
+            echo"                <h5 class=\"modal-title\" id=\"staticBackdropLabel\">Запрос на удаление группы</h5>\n";
+            echo"            </div>\n";
+            echo"            <div class=\"modal-body\">\n";
+            echo"                <p>При удалении группы, будут удалены аккаунты всех студентов, входящих в эту группу, а также все загруженные ими домашние задания. Вы уверены?</p>\n";
+            echo"            </div>\n";
+            echo"            <div class=\"modal-footer\">\n";
+            echo"                <button type=\"button\" class=\"btn btn-secondary\"  onclick='location.href=\"TeacherDashboard.php?do=TDEGview\"'>Отказаться</button>\n";
+            echo"               <button type=\"button\" class=\"btn btn-primary\" onclick='location.href=\"TeacherDashboard.php?do=TDEGdelete&id=".$ThisID."\"'>Удалить</button>\n";
+            echo"           </div>\n";
+            echo"        </div>\n";
+            echo"    </div>\n";
+            echo"</div>\n";
             } elseif ($TDMode == 2) {
                 //редактор уроков
                 if ($FileUploading) {
@@ -514,37 +538,6 @@
                 echo"</div>\n";
             }
             ?>
-            <!-- Modal -->
-            <div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="staticBackdropLabel">Запрос на удаление группы</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <p id="content"></p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Отказаться</button>
-                            <button type="button" class="btn btn-primary">Удалить</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <script>
-                // при открытии модального окна
-                $('#staticBackdrop').on('show.bs.modal', function (event) {
-                    // получить кнопку, которая его открыло
-                    var button = $(event.relatedTarget)
-                    // извлечь информацию из атрибута data-content
-                    var content = button.data('content')
-                    // вывести эту информацию в элемент, имеющий id="content"
-                    $(this).find('#content').text(content);
-                })
-            </script>
         </main>
 
         <!-- Optional JavaScript -->
@@ -556,6 +549,14 @@
         <script>
             feather.replace()
         </script>
-
+        <?php
+        require ('Disconnect.php');
+        ?>
+        <!-- Скрипт, вызывающий модальное окно после загрузки страницы -->
+        <script>
+            $(document).ready(function() {
+                $("#staticBackdrop").modal('show');
+            });
+        </script>
 </body>
 </html>
