@@ -10,8 +10,14 @@
     require('connect.php');
     $scMess = "";
     $flMess = "";
+    $email = "";
+    $ingroup = "";
+    $teacher = "";
     $lastName = "";
     $fistName = "";
+    $patronymic = "";
+    $oldpasshash = "";
+    $newpass= "";
     $ThisStage = 0;
     $MaxStage = 0;
     $ID = $_SESSION['user_id'];
@@ -22,7 +28,13 @@
         $sth->execute();
         $row = $sth->fetchAll(PDO::FETCH_ASSOC);
         if (count($row) > 0) {
+           $email = $row[0]['EMAIL'];
            $fistName = $row[0]['FirstName'];
+           $lastName = $row[0]['LastName'];
+           $patronymic = $row[0]['patronymic'];
+           $oldpasshash = $row[0]['pass_hash'];
+           $ingroup = $row[0]['InGroup'];
+           $teacher = $row[0]['teacher'];
            $scMess ="Здравствуйте, ".$row[0]['LastName']." ".$row[0]['FirstName']." ".$row[0]['patronymic'].".";
            $ThisStage = $row[0]['stage'];
            $MaxStage = $ThisStage;
@@ -175,12 +187,63 @@
             <?php
             if($UDMode == 1) {
                 //редактор профиля
-                $sql = "SELECT * FROM jc_students WHERE `ID`=:ID ";
                 echo "<form>";
                 echo "<div class=\"form-row\">";
                 echo "<div class=\"col-md-4 mb-3\">";
                 echo "<label>Имя</label>";
                 echo "<input type=\"text\" class=\"form-control\" id=\"fistName\" value=\"$fistName\">";
+                echo "</div>";
+                echo "<div class=\"col-md-4 mb-3\">";
+                echo "<label>Фамилия</label>";
+                echo "<input type=\"text\" class=\"form-control\" id=\"lastName\" value=\"$lastName\">";
+                echo "</div>";
+                echo "<div class=\"col-md-4 mb-3\">";
+                echo "<label>Отчество</label>";
+                echo "<input type=\"text\" class=\"form-control\" id=\"patronymic\" value=\"$patronymic\">";
+                echo "</div>";
+                echo "</div>";
+                echo "<div class=\"form-row\">";
+                echo "<div class=\"col-md-4 mb-3\">";
+                echo "<label>Email</label>";
+                echo "<input type=\"text\" class=\"form-control\" id=\"email\" value=\"$email\">";
+                echo "</div>";
+                echo "</div>";
+                echo "<div class=\"form-row\">";
+                echo "<div class=\"col-md-4 mb-3\">";
+                echo "<label>Преподаватель</label>";
+                echo "<select class=\"custom-select d-block w-100\" id=\"teacher\">";
+                $sqlteacher = "SELECT * FROM jc_teachers WHERE `ID`=:ID ";
+                $sth = $db->prepare($sqlteacher);
+                $sth->bindValue(':ID', $teacher);
+                try {
+                    $sth->execute();
+                    $array = $sth->fetchAll(PDO::FETCH_ASSOC);
+                    foreach ($array as $key => $value) {
+                        print "<option value=\"$value[ID]\">$value[FirstName] $value[patronymic] $value[LastName] </option>";
+                    }
+                }
+                catch (PDOException $e)
+                {
+                    $flMess = 'Ошибка Базы Данных!';
+                }
+                echo "<option value=\"\">Выберите...</option>";
+                echo "</div>";
+                echo "<div class=\"col-md-4 mb-3\">";
+                echo "<label>Группа</label>";
+                echo "<select class=\"custom-select d-block w-100\" id=\"InGroup\" value=\"$lastName\">";
+                echo "</div>";
+                echo "</div>";
+                //Надо бы проверять хэши пароля и при несовпадении выдавать ошибку.
+                echo "<div class=\"form-row\">";
+                echo "<div class=\"col-md-4 mb-3\">";
+                echo "<label>Старый пароль</label>";
+                echo "<input type=\"password\" class=\"form-control\" id=\"curpass\">";
+                echo "</div>";
+                echo "</div>";
+                echo "<div class=\"form-row\">";
+                echo "<div class=\"col-md-4 mb-3\">";
+                echo "<label>Новый пароль</label>";
+                echo "<input type=\"password\" class=\"form-control\" id=\"newpass\">";
                 echo "</div>";
                 echo "</div>";
                 echo "</form>";
