@@ -351,8 +351,7 @@
                         echo "        <tr>\n";
                         echo "            <td>" . $counter . "</td>\n";
                         echo "            <td>" . $value['Name'] . "</td>\n";
-                        echo "            <td><a href=\"TeacherDashboard.php?do=TDEGdelConf&id=".$value['ID']."\">Удалить </a></td>\n";
-                        //echo  "            <td><button type=\"button\" class=\"btn btn-primary\" data-toggle=\"modal\" data-target=\"#staticBackdrop\">Удалить</button></td>\n";
+                        echo  "            <td><button type=\"button\" class=\"btn btn-primary\" onclick='location.href=\"TeacherDashboard.php?do=TDEGdelConf&id=".$value['ID']."\"'>Удалить</button></td>\n";
                         echo "        </tr>\n";
                         $counter++;
                     }
@@ -459,7 +458,7 @@
                 }
 
             } elseif($TDMode == 3) {
-                //require ("ModalWin.php");
+                //личный кабинет
             }else{
                 //студенты
                 echo "<form method=\"POST\" action=\"\">\n";
@@ -551,12 +550,14 @@
         </script>
         <?php
         require ('Disconnect.php');
+        if ($TDMode == 11){
+            echo "<!-- Скрипт, вызывающий модальное окно после загрузки страницы -->\n";
+            echo "<script>\n";
+            echo "    $(document).ready(function() {\n";
+            echo "       $(\"#staticBackdrop\").modal('show');\n";
+            echo"    });\n";
+            echo "</script>\n";
+        }
         ?>
-        <!-- Скрипт, вызывающий модальное окно после загрузки страницы -->
-        <script>
-            $(document).ready(function() {
-                $("#staticBackdrop").modal('show');
-            });
-        </script>
 </body>
 </html>
