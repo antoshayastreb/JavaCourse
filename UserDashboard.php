@@ -95,7 +95,7 @@
                 $newpass = $_POST['newpass'];
                 $newpass = password_hash($newpass, PASSWORD_DEFAULT);
                 try {
-                    $sqlus = "UPDATE `jc_students` SET `EMAIL` = ?, `FistName` = ?, `LastName` = ?, `patromymic` = ?
+                    $sqlus = "UPDATE `jc_students` SET `EMAIL` = ?, `FirstName` = ?, `LastName` = ?, `patronymic` = ?
                     , `InGroup` = ?, `teacher` = ?, `pass_hash` = ? WHERE `ID`=?";
                     $stmt = $db->prepare($sqlus);
                     $stmt->bindParam(1, $_POST['email']);
@@ -109,6 +109,7 @@
                     $db->beginTransaction();
                     $stmt->execute();
                     $db->commit();
+                    $scMess = "Данные сохранены!";
                 } catch (PDOException $e) {
                     $flMess = 'Ошибка Базы Данных!';
                 }
@@ -116,23 +117,6 @@
             else{
                 $flMess =  'Пароль неверный!';
             }
-        }
-        try {
-            $sqlus = "UPDATE `jc_students` SET `EMAIL` = ?, `FistName` = ?, `LastName` = ?, `patromymic` = ?
-                    , `InGroup` = ?, `teacher` = ? WHERE `ID`=?";
-            $stmt = $db->prepare($sqlus);
-            $stmt->bindParam(1, $_POST['email']);
-            $stmt->bindParam(2, $_POST['fistName']);
-            $stmt->bindParam(3, $_POST['lastName']);
-            $stmt->bindParam(4, $_POST['patronymic']);
-            $stmt->bindParam(5, $_POST['teacher']);
-            $stmt->bindParam(6, $_POST['InGroup']);
-            $stmt->bindParam(7, $ID);
-            $db->beginTransaction();
-            $stmt->execute();
-            $db->commit();
-        } catch (PDOException $e) {
-            $flMess = 'Ошибка Базы Данных!';
         }
     }
     if (!empty($_FILES)) { // Проверяем пришли ли файлы от клиента
@@ -232,33 +216,38 @@
 
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
             <?php
+            if (strlen($flMess) > 0) {
+                print("<h1 class=\"h2\">" . $flMess . "</h1>");
+            } else {
+                echo "<h1 class=\"h2\">" . $scMess . "</h1>";
+            }
             if($UDMode == 1) {
                 //редактор профиля
                 echo "<form method=\"POST\">";
                 echo "<div class=\"form-row\">";
                 echo "<div class=\"col-md-4 mb-3\">";
                 echo "<label>Имя</label>";
-                echo "<input type=\"text\" class=\"form-control\" id=\"fistName\" value=\"$fistName\">";
+                echo "<input type=\"text\" class=\"form-control\" name=\"fistName\" value=\"$fistName\">";
                 echo "</div>";
                 echo "<div class=\"col-md-4 mb-3\">";
                 echo "<label>Фамилия</label>";
-                echo "<input type=\"text\" class=\"form-control\" id=\"lastName\" value=\"$lastName\">";
+                echo "<input type=\"text\" class=\"form-control\" name=\"lastName\" value=\"$lastName\">";
                 echo "</div>";
                 echo "<div class=\"col-md-4 mb-3\">";
                 echo "<label>Отчество</label>";
-                echo "<input type=\"text\" class=\"form-control\" id=\"patronymic\" value=\"$patronymic\">";
+                echo "<input type=\"text\" class=\"form-control\" name=\"patronymic\" value=\"$patronymic\">";
                 echo "</div>";
                 echo "</div>";
                 echo "<div class=\"form-row\">";
                 echo "<div class=\"col-md-4 mb-3\">";
                 echo "<label>Email</label>";
-                echo "<input type=\"text\" class=\"form-control\" id=\"email\" value=\"$email\">";
+                echo "<input type=\"text\" class=\"form-control\" name=\"email\" value=\"$email\">";
                 echo "</div>";
                 echo "</div>";
                 echo "<div class=\"form-row\">";
                 echo "<div class=\"col-md-4 mb-3\">";
                 echo "<label>Преподаватель</label>";
-                echo "<select class=\"custom-select d-block w-100\" id=\"teacher\">";
+                echo "<select class=\"custom-select d-block w-100\" name=\"teacher\">";
                 $sqlteacher = "SELECT * FROM jc_teachers WHERE `ID`=:ID ";
                 $sth = $db->prepare($sqlteacher);
                 $sth->bindValue(':ID', $teacher);
@@ -285,7 +274,7 @@
                 echo "</div>";
                 echo "<div class=\"col-md-4 mb-3\">";
                 echo "<label>Группа</label>";
-                echo "<select class=\"custom-select d-block w-100\" id=\"InGroup\">";
+                echo "<select class=\"custom-select d-block w-100\" name=\"InGroup\">";
                 $sqlgroup = "SELECT * FROM jc_groups WHERE `ID`=:ID ";
                 $sth = $db->prepare($sqlgroup);
                 $sth->bindValue(':ID', $ingroup);
@@ -315,13 +304,13 @@
                 echo "<div class=\"form-row\">";
                 echo "<div class=\"col-md-4 mb-3\">";
                 echo "<label>Старый пароль</label>";
-                echo "<input type=\"password\" class=\"form-control\" id=\"curpass\">";
+                echo "<input type=\"password\" class=\"form-control\" name=\"curpass\">";
                 echo "</div>";
                 echo "</div>";
                 echo "<div class=\"form-row\">";
                 echo "<div class=\"col-md-4 mb-3\">";
                 echo "<label>Новый пароль</label>";
-                echo "<input type=\"password\" class=\"form-control\" id=\"newpass\">";
+                echo "<input type=\"password\" class=\"form-control\" name=\"newpass\">";
                 echo "</div>";
                 echo "</div>";
                 echo "<button class=\"btn btn-lg btn-primary btn-block\" type=\"submit\">Обновить</button>";
