@@ -3,6 +3,7 @@
     if (!isset($_SESSION['teach_id'])) {
         header("Location: TeacherEnter.php");
     }
+    $NewGroup = "";
     $DeletingGroupID = 0;
     $ds = DIRECTORY_SEPARATOR;
     $LoadFile = false;
@@ -88,6 +89,13 @@
 
                 }
             }
+            //запрос на удаление урока
+            if($_GET['do'] == 'TDEDdelConf'){
+                $TDMode = 21;
+                if ( array_key_exists('stage',$_GET)) {
+                    $NewStage = $_GET['stage'];
+                }
+            }
             //Продвинуть студента по урокам вперед
             if($_GET['do'] == 'TDSDAddStage'){
                 if ( array_key_exists('user_id',$_GET)) {
@@ -163,6 +171,22 @@
                 if ( array_key_exists('id',$_GET)) {
                     $ThisID = $_GET['id'];
                     try {
+                        //Достаем всех студентов в удаляемой группе
+                        $sth = $db->prepare("SELECT * FROM jc_students WHERE `InGroup`=?");
+                        $sth->execute(array($ThisID));
+                        $array = $sth->fetchAll(PDO::FETCH_ASSOC);
+                        if (count($array)) {
+                            foreach ($array as $key => $value) {
+                                //удаляем все ДЗ
+                                $tmpSql = $db->prepare("DELETE FROM jc_homeworks WHERE `user_id`=?");
+                                $tmpSql->execute(array($value['ID']));
+                            }
+                        }
+                        //удаляем всех студентов
+                        $sql="DELETE FROM jc_students WHERE `InGroup`=?";
+                        $sql = $db->prepare($sql);
+                        $sql->execute(array($ThisID));
+                        //удаляем группу
                         $sql="DELETE FROM `jc_groups` WHERE `ID`=?";
                         $sth = $db->prepare($sql);
                         $sth->execute(array($ThisID));
@@ -177,6 +201,17 @@
                 $TDMode = 11;
                 if ( array_key_exists('id',$_GET)) {
                     $ThisID = $_GET['id'];
+                    try {
+                        $sql="SELECT * FROM jc_groups WHERE `ID`=?";
+                        $sth = $db->prepare($sql);
+                        $sth->execute(array($ThisID));
+                        $array = $sth->fetchAll(PDO::FETCH_ASSOC);
+                        if (count($array)){
+                            $NewGroup = $array[0]['Name'];
+                        }
+                    } catch(PDOException $e){
+                        $flMess = 'Ошибка Базы Данных!';
+                    }
                 }
             }
             if($_GET['do'] == 'TDEPshow'){
@@ -364,7 +399,7 @@
             echo"                <h5 class=\"modal-title\" id=\"staticBackdropLabel\">Запрос на удаление группы</h5>\n";
             echo"            </div>\n";
             echo"            <div class=\"modal-body\">\n";
-            echo"                <p>При удалении группы, будут удалены аккаунты всех студентов, входящих в эту группу, а также все загруженные ими домашние задания. Вы уверены?</p>\n";
+            echo"                <p>При удалении группы ".$NewGroup.", будут удалены аккаунты всех студентов, входящих в нее, а также все загруженные ими домашние задания. Вы уверены?</p>\n";
             echo"            </div>\n";
             echo"            <div class=\"modal-footer\">\n";
             echo"                <button type=\"button\" class=\"btn btn-secondary\"  onclick='location.href=\"TeacherDashboard.php?do=TDEGview\"'>Отказаться</button>\n";
@@ -439,7 +474,7 @@
                                         print("<div class=\"row\">\n");
                                         print("    <div class=\"col-4\">Урок № " . $row[$i][0] . "</div>\n");
                                         print("    <div class=\"col-4\">" . $row[$i][1] . "</div>\n");
-                                        print("    <div class=\"col-4\"><a href=\"TeacherDashboard.php?do=TDEDchange&stage=" . $row[$i][0] . "\">Изменить</a>" . " <a href=\"TeacherDashboard.php?do=TDEDdelete&stage=" . $row[$i][0] . "\">Удалить</a>" . " <a href=\"TeacherDashboard.php?do=TDEDview&stage=" . $row[$i][0] . "\">Просмотреть</a></div>\n");
+                                        print("    <div class=\"col-4\"><a href=\"TeacherDashboard.php?do=TDEDchange&stage=" . $row[$i][0] . "\">Изменить</a>" . " <a href=\"TeacherDashboard.php?do=TDEDdelConf&stage=" . $row[$i][0] . "\">Удалить</a>" . " <a href=\"TeacherDashboard.php?do=TDEDview&stage=" . $row[$i][0] . "\">Просмотреть</a></div>\n");
                                         print("</div>\n");
                                     }
                                     $idx++;
@@ -457,7 +492,25 @@
                     print("</div>\n");
                 }
 
-            } elseif($TDMode == 3) {
+            }elseif ($TDMode == 21){
+                //запрос на удаление урока
+                echo"<div class=\"modal fade\" id=\"staticBackdrop\" data-backdrop=\"static\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"staticBackdropLabel\" aria-hidden=\"true\">\n";
+                echo "   <div class=\"modal-dialog\" role=\"document\">\n";
+                echo"        <div class=\"modal-content\">\n";
+                echo "           <div class=\"modal-header\">\n";
+                echo"                <h5 class=\"modal-title\" id=\"staticBackdropLabel\">Запрос на удаление урока</h5>\n";
+                echo"            </div>\n";
+                echo"            <div class=\"modal-body\">\n";
+                echo"                <p>После нажатия кнопки \"Удалить\", урок №".$NewStage." будет удален навсегда. Вы уверены?</p>\n";
+                echo"            </div>\n";
+                echo"            <div class=\"modal-footer\">\n";
+                echo"                <button type=\"button\" class=\"btn btn-secondary\"  onclick='location.href=\"TeacherDashboard.php?do=TDEDshow\"'>Отказаться</button>\n";
+                echo"               <button type=\"button\" class=\"btn btn-primary\" onclick='location.href=\"TeacherDashboard.php?do=TDEDdelete&stage=" . $NewStage . "\"'>Удалить</button>\n";
+                echo"           </div>\n";
+                echo"        </div>\n";
+                echo"    </div>\n";
+                echo"</div>\n";
+            }elseif($TDMode == 3) {
                 //личный кабинет
             }else{
                 //студенты
@@ -550,7 +603,7 @@
         </script>
         <?php
         require ('Disconnect.php');
-        if ($TDMode == 11){
+        if (($TDMode == 11)| ($TDMode == 21)){
             echo "<!-- Скрипт, вызывающий модальное окно после загрузки страницы -->\n";
             echo "<script>\n";
             echo "    $(document).ready(function() {\n";

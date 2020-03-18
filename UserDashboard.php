@@ -335,7 +335,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <p> Вы уверены? </p>
+                            <p> Ваше домашнее задание будет навсегда удалено. Вы уверены? </p>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Отказаться</button>
