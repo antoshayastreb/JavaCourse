@@ -282,7 +282,6 @@
             print("<link href=\"css/dropzone.css\" type=\"text/css\" rel=\"stylesheet\" />\n");
             echo "<script src=\"js/dropzone.js\"></script>\n";
         }
-            echo "<link href=\"css/grid.css\" rel=\"stylesheet\">\n";
     }
     ?>
     <title>Курсы Java. Режим преподавателя.</title>
@@ -436,13 +435,17 @@
                     }
                     print("<a href=\"TeacherDashboard.php?do=TDEDshow\">Назад</a>");
                 }else{
-                    print ("<div class=\"container\">\n");
-                    print ("<h1>Уроки в базе данных</h1>\n");
-                    print("<div class=\"row\">\n");
-                    print("    <div class=\"col-4\"><b>Порядковый номер урока в курсе</b></div>\n");
-                    print("    <div class=\"col-4\"><b>Дата и время загрузки</b></div>\n");
-                    print("    <div class=\"col-4\"><b>Действие</b></div>\n");
-                    print("</div>\n");
+                    echo "<h4>Уроки в базе данных:</h4>";
+                    echo "<div class=\"table-responsive\">\n";
+                    echo "    <table class=\"table table-striped table-sm\">\n";
+                    echo "        <thead>\n";
+                    echo "        <tr>\n";
+                    echo "            <th>Порядковый номер урока в курсе</th>\n";
+                    echo "            <th>Дата и время загрузки</th>\n";
+                    echo "            <th>Действие</th>\n";
+                    echo "        </tr>\n";
+                    echo "        </thead>\n";
+                    echo "        <tbody>\n";
                     $MaxStageNum = 0;
                     //нахождение максимального номера урока
                     $sql = "SELECT MAX(`Stage`) FROM jc_lessons";
@@ -464,18 +467,19 @@
                             if (count($row) > 0) {
                                 for ($i = 0; $i < count($row);$i++) {
                                     while ($idx != $row[$i][0]) {
-                                        print("<div class=\"row mb-3\">\n");
-                                        print("    <div class=\"col-md-8 themed-grid-col\">Новый урок №" . $idx . "</div>\n");
-                                        print("    <div class=\"col-md-4 themed-grid-col\"><a href=\"TeacherDashboard.php?do=TDEDadd&stage=" . $idx . "\">Добавить</a></div>\n");
-                                        print("</div>\n");
+                                        echo "        <tr>\n";
+                                        echo "            <td>Новый урок №" . $idx . "</td>\n";
+                                        echo "            <td></td>\n";
+                                        echo "            <td><button type=\"button\" class=\"btn btn-primary\" onclick='location.href=\"TeacherDashboard.php?do=TDEDadd&stage=" . $idx . "\"'>Добавить</button></td>\n";
+                                        echo "        </tr>\n";
                                         $idx++;
                                     }
                                     if ($idx == $row[$i][0]) {
-                                        print("<div class=\"row\">\n");
-                                        print("    <div class=\"col-4\">Урок № " . $row[$i][0] . "</div>\n");
-                                        print("    <div class=\"col-4\">" . $row[$i][1] . "</div>\n");
-                                        print("    <div class=\"col-4\"><a href=\"TeacherDashboard.php?do=TDEDchange&stage=" . $row[$i][0] . "\">Изменить</a>" . " <a href=\"TeacherDashboard.php?do=TDEDdelConf&stage=" . $row[$i][0] . "\">Удалить</a>" . " <a href=\"TeacherDashboard.php?do=TDEDview&stage=" . $row[$i][0] . "\">Просмотреть</a></div>\n");
-                                        print("</div>\n");
+                                        echo "        <tr>\n";
+                                        echo "            <td> Урок № " . $row[$i][0] . "</td>\n";
+                                        echo "            <td>" . $row[$i][1] . "</td>\n";
+                                        echo "            <td><button type=\"button\" class=\"btn btn-primary\" onclick='location.href=\"TeacherDashboard.php?do=TDEDchange&stage=" . $row[$i][0] . "\"'>Изменить</button>" . " <button type=\"button\" class=\"btn btn-warning\" onclick='location.href=\"TeacherDashboard.php?do=TDEDdelConf&stage=" . $row[$i][0] . "\"'>Удалить</button>" . " <button type=\"button\" class=\"btn btn-secondary\" onclick='location.href=\"TeacherDashboard.php?do=TDEDview&stage=" . $row[$i][0] . "\"'>Просмотреть</button></td>\n";
+                                        echo "        </tr>\n";
                                     }
                                     $idx++;
                                 }
@@ -485,11 +489,13 @@
                         }
                     }
                     //футер таблицы
-                    print("<div class=\"row mb-3\">\n");
-                    print("    <div class=\"col-md-8 themed-grid-col\">Новый урок №".($MaxStageNum + 1)."</div>\n");
-                    print("    <div class=\"col-md-4 themed-grid-col\"><a href=\"TeacherDashboard.php?do=TDEDadd&stage=".($MaxStageNum + 1)."\">Добавить</a></div>\n");
-                    print("</div>\n");
-                    print("</div>\n");
+                    echo "        <tr>\n";
+                    echo "            <td>Новый урок №" . ($MaxStageNum + 1) . "</td>\n";
+                    echo "            <td></td>\n";
+                    echo "            <td><button type=\"button\" class=\"btn btn-primary\" onclick='location.href=\"TeacherDashboard.php?do=TDEDadd&stage=" . ($MaxStageNum + 1) . "\"'>Добавить</button></td>\n";
+                    echo "        </tr>\n";
+                    echo "    </table>";
+                    echo"</div>\n";
                 }
 
             }elseif ($TDMode == 21){
