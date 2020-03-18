@@ -118,6 +118,27 @@
                 $flMess =  'Пароль неверный!';
             }
         }
+        else{
+            try {
+                $sqlus = "UPDATE `jc_students` SET `EMAIL` = ?, `FirstName` = ?, `LastName` = ?, `patronymic` = ?
+                    , `InGroup` = ?, `teacher` = ? WHERE `ID`=?";
+                $stmt = $db->prepare($sqlus);
+                $stmt->bindParam(1, $_POST['email']);
+                $stmt->bindParam(2, $_POST['fistName']);
+                $stmt->bindParam(3, $_POST['lastName']);
+                $stmt->bindParam(4, $_POST['patronymic']);
+                $stmt->bindParam(5, $_POST['teacher']);
+                $stmt->bindParam(6, $_POST['InGroup']);
+                $stmt->bindParam(7, $ID);
+                $db->beginTransaction();
+                $stmt->execute();
+                $db->commit();
+                $scMess = "Данные сохранены!";
+            } catch (PDOException $e) {
+                $flMess = 'Ошибка Базы Данных!';
+            }
+        }
+
     }
     if (!empty($_FILES)) { // Проверяем пришли ли файлы от клиента
         //$FileUploading = true;
@@ -218,8 +239,6 @@
             <?php
             if (strlen($flMess) > 0) {
                 print("<h1 class=\"h2\">" . $flMess . "</h1>");
-            } else {
-                echo "<h1 class=\"h2\">" . $scMess . "</h1>";
             }
             if($UDMode == 1) {
                 //редактор профиля
