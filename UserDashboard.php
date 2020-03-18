@@ -88,6 +88,53 @@
             }
         }
     }
+    if (count($_POST)>0) {
+        if (isset($_POST['curpass']) && isset($_POST['newpass'])){
+            $curpass = $_POST['curpass'];
+            if (password_verify($curpass, $oldpasshash)){
+                $newpass = $_POST['newpass'];
+                $newpass = password_hash($newpass, PASSWORD_DEFAULT);
+                try {
+                    $sqlus = "UPDATE `jc_students` SET `EMAIL` = ?, `FistName` = ?, `LastName` = ?, `patromymic` = ?
+                    , `InGroup` = ?, `teacher` = ?, `pass_hash` = ? WHERE `ID`=?";
+                    $stmt = $db->prepare($sqlus);
+                    $stmt->bindParam(1, $_POST['email']);
+                    $stmt->bindParam(2, $_POST['fistName']);
+                    $stmt->bindParam(3, $_POST['lastName']);
+                    $stmt->bindParam(4, $_POST['patronymic']);
+                    $stmt->bindParam(5, $_POST['teacher']);
+                    $stmt->bindParam(6, $_POST['InGroup']);
+                    $stmt->bindParam(7, $newpass);
+                    $stmt->bindParam(8, $ID);
+                    $db->beginTransaction();
+                    $stmt->execute();
+                    $db->commit();
+                } catch (PDOException $e) {
+                    $flMess = 'Ошибка Базы Данных!';
+                }
+            }
+            else{
+                $flMess =  'Пароль неверный!';
+            }
+        }
+        try {
+            $sqlus = "UPDATE `jc_students` SET `EMAIL` = ?, `FistName` = ?, `LastName` = ?, `patromymic` = ?
+                    , `InGroup` = ?, `teacher` = ? WHERE `ID`=?";
+            $stmt = $db->prepare($sqlus);
+            $stmt->bindParam(1, $_POST['email']);
+            $stmt->bindParam(2, $_POST['fistName']);
+            $stmt->bindParam(3, $_POST['lastName']);
+            $stmt->bindParam(4, $_POST['patronymic']);
+            $stmt->bindParam(5, $_POST['teacher']);
+            $stmt->bindParam(6, $_POST['InGroup']);
+            $stmt->bindParam(7, $ID);
+            $db->beginTransaction();
+            $stmt->execute();
+            $db->commit();
+        } catch (PDOException $e) {
+            $flMess = 'Ошибка Базы Данных!';
+        }
+    }
     if (!empty($_FILES)) { // Проверяем пришли ли файлы от клиента
         //$FileUploading = true;
         $tempFile = $_FILES['file']['tmp_name']; //Получаем загруженные файлы из временного хранилища
@@ -187,7 +234,7 @@
             <?php
             if($UDMode == 1) {
                 //редактор профиля
-                echo "<form>";
+                echo "<form method=\"POST\">";
                 echo "<div class=\"form-row\">";
                 echo "<div class=\"col-md-4 mb-3\">";
                 echo "<label>Имя</label>";
@@ -277,6 +324,7 @@
                 echo "<input type=\"password\" class=\"form-control\" id=\"newpass\">";
                 echo "</div>";
                 echo "</div>";
+                echo "<button class=\"btn btn-lg btn-primary btn-block\" type=\"submit\">Обновить</button>";
                 echo "</form>";
             }else{
                 echo "<div class=\"d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom\">\n";
