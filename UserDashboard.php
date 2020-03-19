@@ -361,9 +361,13 @@ Email: ".$array[0]['EMAIL'];
                 echo "<input type=\"password\" class=\"form-control\" name=\"newpass\">";
                 echo "</div>";
                 echo "</div>";
-                echo "<button class=\"btn btn-primary btn-lg\" type=\"submit\">Обновить</button>";
-                echo "<button type=\"button\" class=\"btn btn-secondary\" onclick='location.href=\"UserDashboard.php?do=UDDwnUserData\"'>Скачать личные данные</button>";
+                echo "<button class=\"btn btn-primary btn-lg\" type=\"submit\">Обновить</button>\n";
                 echo "</form>";
+                echo "<br>\n";
+                echo "<h4>Дополнительные действия</h4>\n";
+                echo "<br>\n";
+                echo "<button type=\"button\" class=\"btn btn-secondary\" onclick='location.href=\"UserDashboard.php?do=UDDwnUserData\"'>Скачать личные данные</button>\n";
+                echo "<button type=\"button\" class=\"btn btn-warning\">Удалить аккаунт</button>\n";
             }else{
                 echo "<div class=\"d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom\">\n";
                 echo "<h1 class=\"h2\">".$scMess." Это урок № ".$ThisStage."</h1>\n";
