@@ -96,11 +96,14 @@
                 $sth->execute(array($ID));
                 $array = $sth->fetchAll(PDO::FETCH_ASSOC);
                 $FileSize = 0;
-                $svFileName = "Overlord.txt";
+                $svFileName = "Личные_данные.txt";
                 if (count($array)) {
-                    $svFileName = $array[0]['LastName']."_".$array[0]['FirstName'].$svFileName;
+                    $svFileName = $array[0]['LastName']."_".$array[0]['FirstName']."_".$svFileName;
                 }
-                $lob = "Фамилия: ".$array[0]['LastName']."\nИмя: ".$array[0]['FirstName']."\nОтчество: ".$array[0]['patronymic']."\nEmail: ".$array[0]['EMAIL'];
+                $lob = "Фамилия: ".$array[0]['LastName']."
+Имя: ".$array[0]['FirstName']."
+Отчество: ".$array[0]['patronymic']."
+Email: ".$array[0]['EMAIL'];
                 $FileSize = strlen($lob);
                 // заставляем браузер показать окно сохранения файла
                 header('Content-Description: File Transfer');
