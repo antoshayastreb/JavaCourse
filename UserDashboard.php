@@ -86,6 +86,35 @@
                     }
                 }
             }
+            //скачать личные данные
+            if (($_GET['do'] == 'UDDwnUserData')){
+                $UDMode = 1;
+                if (ob_get_level()) {
+                    ob_end_clean();
+                }
+                $sth = $db->prepare("SELECT * FROM jc_students WHERE `ID`=?");
+                $sth->execute(array($ID));
+                $array = $sth->fetchAll(PDO::FETCH_ASSOC);
+                $FileSize = 0;
+                $svFileName = "Overlord.txt";
+                if (count($array)) {
+                    $svFileName = $array[0]['LastName']."_".$array[0]['FirstName'].$svFileName;
+                }
+                $lob = "Фамилия: ".$array[0]['LastName']."\nИмя: ".$array[0]['FirstName']."\nОтчество: ".$array[0]['patronymic']."\nEmail: ".$array[0]['EMAIL'];
+                $FileSize = strlen($lob);
+                // заставляем браузер показать окно сохранения файла
+                header('Content-Description: File Transfer');
+                header('Content-Type: 	text/plain');
+                header('Content-Disposition: attachment; filename=' . basename($svFileName));
+                header('Content-Transfer-Encoding: binary');
+                header('Expires: 0');
+                header('Cache-Control: must-revalidate');
+                header('Pragma: public');
+                header('Content-Length: '.$FileSize);
+                // читаем файл и отправляем его пользователю
+                echo $lob;
+                exit;
+            }
         }
     }
     if (count($_POST)>0) {
@@ -178,7 +207,6 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="icon" href="../../../../favicon.ico">
 
     <title>Курсы Java</title>
 
@@ -319,7 +347,6 @@
                 echo "</select>";
                 echo "</div>";
                 echo "</div>";
-                //Надо бы проверять хэши пароля и при несовпадении выдавать ошибку.
                 echo "<div class=\"form-row\">";
                 echo "<div class=\"col-md-4 mb-3\">";
                 echo "<label>Старый пароль</label>";
@@ -332,7 +359,8 @@
                 echo "<input type=\"password\" class=\"form-control\" name=\"newpass\">";
                 echo "</div>";
                 echo "</div>";
-                echo "<button class=\"btn btn-lg btn-primary btn-block\" type=\"submit\">Обновить</button>";
+                echo "<button class=\"btn btn-primary btn-lg\" type=\"submit\">Обновить</button>";
+                echo "<button type=\"button\" class=\"btn btn-secondary\" onclick='location.href=\"UserDashboard.php?do=UDDwnUserData\"'>Скачать личные данные</button>";
                 echo "</form>";
             }else{
                 echo "<div class=\"d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom\">\n";
@@ -412,6 +440,13 @@
 <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
 <script>
     feather.replace()
+
+    function slugify($string) {
+        $translit = "Any-Latin; NFD; [:Nonspacing Mark:] Remove; NFC; [:Punctuation:] Remove; Lower();";
+        $string = transliterator_transliterate($translit, $string);
+        $string = preg_replace('/[-\s]+/', '-', $string);
+        return trim($string, '-');
+    }
 </script>
 <?php
     require ('Disconnect.php');
