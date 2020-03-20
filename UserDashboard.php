@@ -1,4 +1,5 @@
 <?php
+    include ('Utils.php');
     session_start();
     $ds = DIRECTORY_SEPARATOR;
     $LoadFile = false;
@@ -99,6 +100,7 @@
                 $svFileName = "Личные_данные.txt";
                 if (count($array)) {
                     $svFileName = $array[0]['LastName']."_".$array[0]['FirstName']."_".$svFileName;
+                    $svFileName = rus2translit($svFileName);
                 }
                 $lob = "Фамилия: ".$array[0]['LastName']."
 Имя: ".$array[0]['FirstName']."

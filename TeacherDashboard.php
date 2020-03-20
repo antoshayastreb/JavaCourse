@@ -1,5 +1,6 @@
 <?php
     session_start();
+    include ('Utils.php');
     if (!isset($_SESSION['teach_id'])) {
         header("Location: TeacherEnter.php");
     }
@@ -140,6 +141,7 @@
                             $svFileName = "ДЗ.zip";
                             if (count($array)) {
                                 $svFileName = $array[0]['LastName']."_".$array[0]['FirstName']."_Урок № ".$ThisStage.".zip";
+                                $svFileName = rus2translit($svFileName);
                                 }
                             $sth = $db->prepare("SELECT `body` FROM jc_homeworks  WHERE `user_id`=? AND `stage`=?");
                             $sth->execute(array($ThisID,$ThisStage));
