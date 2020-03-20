@@ -157,6 +157,7 @@
                             header('Content-Length: '.$FileSize);
                             // читаем файл и отправляем его пользователю
                             echo $lob;
+                            exit;
                         }
                     }
                 }
