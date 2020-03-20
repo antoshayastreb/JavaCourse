@@ -14,7 +14,7 @@ if (array_key_exists('user_id',$_SESSION)) {
 if ( array_key_exists('stage',$_SESSION)){
     $ThisStage = $_SESSION['stage'];
     if ($ThisStage) {
-        require('connect.php');
+        require('Connect.php');
         $stmt = $db->prepare("select `body` from `jc_lessons` where `Stage`=?");
         $stmt->execute(array($ThisStage));
         $stmt->bindColumn(1, $lob, PDO::PARAM_LOB);

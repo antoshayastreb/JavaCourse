@@ -11,7 +11,7 @@
     $FileUploading = false;
     $TDMode = 0;
     $currentGroup = 0;
-    require('connect.php');
+    require('Connect.php');
     $scMess = "";
     $flMess = "";
     $ID = $_SESSION['teach_id'];

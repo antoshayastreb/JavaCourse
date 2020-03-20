@@ -7,7 +7,7 @@
     if (!isset($_SESSION['user_id'])) {
         header("Location: Enter.php");
     }
-    require('connect.php');
+    require('Connect.php');
     $scMess = "";
     $flMess = "";
     $email = "";
@@ -116,6 +116,7 @@ Email: ".$array[0]['EMAIL'];
                 header('Content-Length: '.$FileSize);
                 // читаем файл и отправляем его пользователю
                 echo $lob;
+                exit;
             }
         }
     }

@@ -9,7 +9,7 @@ if($_GET['do'] == 'logout'){
 }
 $scMess = "";
 $flMess = "";
-require ('connect.php');
+require ('Connect.php');
 if (isset($_POST['inputEmail']) and isset($_POST['inputPassword'])){
     $password = $_POST['inputPassword'];
     //$pass_hash = password_hash($password, PASSWORD_DEFAULT);
