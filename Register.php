@@ -12,13 +12,7 @@ if (isset($_POST['email']) && isset($_POST['password'])){
     $pass_hash = password_hash($password, PASSWORD_DEFAULT);
     $teacher = $_POST['csTeacher'];
     $InGroup = $_POST['csGroup'];
-
-
-    //Я всю ночь провозился и так и не понял, как это работает.
-    //INSERT INTO `jc_students` (`ID`, `email`, `FirstName`, `LastName`, `patronymic`, `pass_hash`) VALUES (NULL, 'pupkin@mail.ru', 'Алексей', 'Пупкин', 'Вячеславович', '');
     $sth = $db->prepare("INSERT INTO `jc_students` (`ID`, `EMAIL`, `FirstName`, `LastName`, `patronymic`, `InGroup`, `teacher`, `stage`, `registered`, `pass_hash`) VALUES (?,?,?,?,?,?,?,?,?,?)");
-    /*$sth = $db->prepare("INSERT INTO `jc_teachers` (`ID`, `email`, `FirstName`, `patronymic`, `LastName`, `pass_hash`) VALUES (?,?,?,?,?,?)");
-    $sth->execute(array('2', 'phil@mail.ru', 'Александр', 'Иванович', 'Быков', ''));*/
     $sth->execute(array(NULL, $email, $FirstName, $LastName, $patronymic, $InGroup, $teacher, $stage, $registered, $pass_hash));
     $insert_id = $db->lastInsertId();
 
@@ -70,7 +64,7 @@ if (isset($_POST['email']) && isset($_POST['password'])){
         <p class="lead">
     </div>
 
-
+            <?php if(isset($flMess)){?><div class="alert-danger" role="alert"><?php echo $flMess; ?></div><?php }?>
             <form class="needs-validation" method="POST" action="" novalidate>
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -154,15 +148,19 @@ if (isset($_POST['email']) && isset($_POST['password'])){
                 </div>
                 <hr class="mb-4">
 
-                <div class="checkbox mb-3">
-                    <label>
-                        <input type="checkbox" name="personalInfo" value="personalInfo" required> Я поддтверждаю согласие на обработку персональных данных в соотвествии с федеральным законом
-                        <a href="https://b-152.ru/152-FZ_O_personalnykh_dannykh" target="_blank">№152-ФЗ «О персональных данных»</a>.
+                <div class="form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="invalidCheck3" required>
+                        <label class="form-check-label" for="invalidCheck3">
+                            Я подтверждаю согласие на обработку персональных данных в соотвествии с федеральным законом
+                            <a href="https://b-152.ru/152-FZ_O_personalnykh_dannykh" target="_blank">№152-ФЗ «О персональных данных»</a>.
+                        </label>
                         <div class="invalid-feedback">
                             Необходимо согласие.
                         </div>
-                    </label>
+                    </div>
                 </div>
+
 
                 <hr class="mb-4">
                 <button class="btn btn-primary btn-lg btn-block" type="submit">Зарегистрироваться</button>

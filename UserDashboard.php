@@ -103,9 +103,9 @@
                     $svFileName = rus2translit($svFileName);
                 }
                 $lob = "Фамилия: ".$array[0]['LastName']."
-Имя: ".$array[0]['FirstName']."
-Отчество: ".$array[0]['patronymic']."
-Email: ".$array[0]['EMAIL'];
+                Имя: ".$array[0]['FirstName']."
+                Отчество: ".$array[0]['patronymic']."
+                Email: ".$array[0]['EMAIL'];
                 $FileSize = strlen($lob);
                 // заставляем браузер показать окно сохранения файла
                 header('Content-Description: File Transfer');
@@ -119,6 +119,26 @@ Email: ".$array[0]['EMAIL'];
                 // читаем файл и отправляем его пользователю
                 echo $lob;
                 exit;
+            }
+            //удалить личные данные
+            if (($_GET['do'] == 'UDDelUserData')){
+                $UDMode = 1;
+                try {
+                    //Удаляем все дз студента
+                    $sql = "DELETE FROM `jc_homeworks` WHERE `user_id`=?";
+                    $sth = $db->prepare($sql);
+                    $sth->execute(array($ID));
+
+                    //Удаляем студента
+                    $sql="DELETE FROM jc_students WHERE `ID`=?";
+                    $sql = $db->prepare($sql);
+                    $sql->execute(array($ID));
+
+                } catch (PDOException $e) {
+                    $flMess = 'Ошибка Базы Данных!';
+                }
+                header("Location: index.php");
+
             }
         }
     }
@@ -370,7 +390,9 @@ Email: ".$array[0]['EMAIL'];
                 echo "<h4>Дополнительные действия</h4>\n";
                 echo "<br>\n";
                 echo "<button type=\"button\" class=\"btn btn-secondary\" onclick='location.href=\"UserDashboard.php?do=UDDwnUserData\"'>Скачать личные данные</button>\n";
-                echo "<button type=\"button\" class=\"btn btn-warning\">Удалить аккаунт</button>\n";
+                echo "<a class=\"btn btn-warning\" role=\"button\" data-toggle=\"modal\" href=\"#staticBackdropDelData\">Удалить аккаунт</a>\n";
+                echo "<footer class=\"mastfoot mt-auto\">";
+                echo "</footer>";
             }else{
                 echo "<div class=\"d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom\">\n";
                 echo "<h1 class=\"h2\">".$scMess." Это урок № ".$ThisStage."</h1>\n";
@@ -408,7 +430,7 @@ Email: ".$array[0]['EMAIL'];
                             } else {
                                 echo ", но ещё не проверено преподавателем.</h3>\n";
                                 //echo "<h3 class=\"h3\">Вы можете <a href=\"UserDashboard.php?do=UDDelHM&stage=" . $ThisStage . "\">Удалить</a> или  <a href=\"UserDashboard.php?do=UDChgHM&stage=" . $ThisStage . "\">Изменить</a> его.</h3>";
-                                echo "<h3 class=\"h3\">Вы можете <a  data-toggle=\"modal\" href=\"#staticBackdrop\">Удалить</a> или <a  data-toggle=\"modal\" href=\"#staticBackdrop\">Изменить</a> его.</h3>";
+                                echo "<h3 class=\"h3\">Вы можете <a  data-toggle=\"modal\" href=\"#staticBackdropDelHW\">Удалить</a> или <a  data-toggle=\"modal\" href=\"#staticBackdropDelHW\">Изменить</a> его.</h3>";
                             }
                         }
                     }
@@ -417,8 +439,9 @@ Email: ".$array[0]['EMAIL'];
                 }
             }
             ?>
-            <!-- Modal -->
-            <div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <!-- Modal
+            модал удаление дз -->
+            <div class="modal fade" id="staticBackdropDelHW" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -433,6 +456,25 @@ Email: ".$array[0]['EMAIL'];
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Отказаться</button>
                             <button type="button" class="btn btn-primary" onclick='location.href="UserDashboard.php?do=UDDelHM&stage=<?php echo $ThisStage ?>"'>Удалить</button>
+                        </div>
+                    </div>
+                </div>
+            <!-- модал удаление данных -->
+            </div><div class="modal fade" id="staticBackdropDelData" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Запрос на удаление архива из БД</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p> Ваше данные, а также домашнее задание будут навсегда удалено. Вы уверены? </p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Отказаться</button>
+                            <button type="button" class="btn btn-primary" onclick='location.href="UserDashboard.php?do=UDDelUserData&stage=<?php echo $ThisStage ?>"'>Удалить</button>
                         </div>
                     </div>
                 </div>
