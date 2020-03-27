@@ -621,5 +621,17 @@
             echo "</script>\n";
         }
         ?>
+        <script type="text/javascript" id="cookieinfo"
+                src="//cookieinfoscript.com/js/cookieinfo.min.js"
+                data-message="Этот сайт использует cookie файлы для хранения информации. Продолжая пользоваться сайтом, вы автоматически соглашаетесь с обработкой файлов cookie."
+                data-cookie="CookieInfoScript"
+                data-close-text="Понятно"
+                data-fg="#FFF"
+                data-bg="#333"
+                data-divlink="#FFFFFF"
+                data-divlinkbg="#007BFF"
+                data-linkmsg="Больше информации"
+                data-moreinfo="https://ru.wikipedia.org/wiki/Cookie">
+        </script>
 </body>
 </html>

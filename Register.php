@@ -153,7 +153,7 @@ if (isset($_POST['email']) && isset($_POST['password'])){
                         <input class="form-check-input" type="checkbox" value="" id="invalidCheck3" required>
                         <label class="form-check-label" for="invalidCheck3">
                             Я подтверждаю согласие на обработку персональных данных в соотвествии с федеральным законом
-                            <a href="https://b-152.ru/152-FZ_O_personalnykh_dannykh" target="_blank">№152-ФЗ «О персональных данных»</a>.
+                            <a href="http://www.consultant.ru/cons/cgi/online.cgi?req=doc&base=LAW&n=286959&fld=134&dst=1000000001,0&rnd=0.21050761970264387#019597009181987213" target="_blank">№152-ФЗ «О персональных данных»</a>.
                         </label>
                         <div class="invalid-feedback">
                             Необходимо согласие.
@@ -204,6 +204,18 @@ if (isset($_POST['email']) && isset($_POST['password'])){
             });
         }, false);
     })();
+</script>
+<script type="text/javascript" id="cookieinfo"
+        src="//cookieinfoscript.com/js/cookieinfo.min.js"
+        data-message="Этот сайт использует cookie файлы для хранения информации. Продолжая пользоваться сайтом, вы автоматически соглашаетесь с обработкой файлов cookie."
+        data-cookie="CookieInfoScript"
+        data-close-text="Понятно"
+        data-fg="#FFF"
+        data-bg="#333"
+        data-divlink="#FFFFFF"
+        data-divlinkbg="#007BFF"
+        data-linkmsg="Больше информации"
+        data-moreinfo="https://ru.wikipedia.org/wiki/Cookie">
 </script>
 </body>
 </html>
