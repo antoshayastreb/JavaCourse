@@ -18,7 +18,6 @@
     $fistName = "";
     $patronymic = "";
     $oldpasshash = "";
-    $newpass= "";
     $ThisStage = 0;
     $MaxStage = 0;
     $ID = $_SESSION['user_id'];
@@ -143,8 +142,9 @@
         }
     }
     if (count($_POST)>0) {
-        if (isset($_POST['curpass']) && isset($_POST['newpass'])){
+        if (($_POST['curpass']!= "") and ($_POST['newpass']!= "")){
             $curpass = $_POST['curpass'];
+            $newpass = $_POST['newpass'];
             if (password_verify($curpass, $oldpasshash)){
                 $newpass = $_POST['newpass'];
                 $newpass = password_hash($newpass, PASSWORD_DEFAULT);
@@ -266,26 +266,9 @@
 
 <div class="container-fluid">
     <div class="row">
-        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-            <div class="sidebar-sticky">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="UserDashboard.php">
-                            <span data-feather="home"></span>
-                            Ваш Текущий урок<span class="sr-only">(current)</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="UserDashboard.php?do=UDEditProfile">
-                            <span data-feather="users"></span>
-                            Ваш профиль
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+       
 
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+        <div role="main" class="col">
             <?php
             if (strlen($flMess) > 0) {
                 print("<h1 class=\"h2\">" . $flMess . "</h1>");
@@ -388,8 +371,11 @@
                 echo "<br>\n";
                 echo "<button type=\"button\" class=\"btn btn-secondary\" onclick='location.href=\"UserDashboard.php?do=UDDwnUserData\"'>Скачать личные данные</button>\n";
                 echo "<a class=\"btn btn-warning\" role=\"button\" data-toggle=\"modal\" href=\"#staticBackdropDelData\">Удалить аккаунт</a>\n";
-                echo "<footer class=\"mastfoot mt-auto\">";
-                echo "</footer>";
+                echo "<footer class=\"mastfoot mt-auto\">\n";
+                echo "<div class=\"inner\">\n";
+                echo "<p>\n";
+                echo "</div>\n";
+                echo "</footer>\n";
             }else{
                 echo "<div class=\"d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom\">\n";
                 echo "<h1 class=\"h2\">".$scMess." Это урок № ".$ThisStage."</h1>\n";
@@ -476,7 +462,7 @@
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
     </div>
 </div>
 
