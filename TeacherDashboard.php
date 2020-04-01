@@ -292,20 +292,20 @@
 
 <body>
 <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
-    <a class="navbar-brand" href="#">Top navbar</a>
+    <a class="navbar-brand" href="#">Java курс</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
     <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="TeacherDashboard.php">Студенты</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
+            <li class="nav-item active">
+                <a class="nav-link" href="TeacherDashboard.php?do=TDEGview">Учебные группы</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link disabled" href="#">Disabled</a>
+            <li class="nav-item active">
+                <a class="nav-link" href="TeacherDashboard.php?do=TDEDshow">Редактор урока</a>
             </li>
         </ul>
         <button class="btn btn-outline-danger my-2 my-sm-0" onClick='location.href="TeacherEnter.php?do=logout"'>Выход</button>
@@ -314,43 +314,8 @@
 
 <div class="container-fluid">
     <div class="row">
-        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-            <div class="sidebar-sticky">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="TeacherDashboard.php">
-                            <span data-feather="users"></span>
-                            Студенты
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="TeacherDashboard.php?do=TDEGview">
-                            <span data-feather="home"></span>
-                            Учебные группы
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="TeacherDashboard.php?do=TDEDshow">
-                            <span data-feather="layers"></span>
-                            Редактор уроков
-                        </a>
-                    </li>
-                   <!-- <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <span data-feather="layers"></span>
-                            Integrations
-                        </a>
-                    </li> -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="TeacherDashboard.php?do=TDEPshow">
-                            <span data-feather="file"></span>
-                            Профиль
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+        
+        <main role="main" class="col">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
                 <?php if (strlen($flMess) > 0){
                     print("<h1 class=\"h2\">".$flMess."</h1>");
@@ -633,5 +598,6 @@
                 data-linkmsg="Больше информации"
                 data-moreinfo="https://ru.wikipedia.org/wiki/Cookie">
         </script>
+    </div>
 </body>
 </html>
