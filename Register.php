@@ -147,22 +147,6 @@ if (isset($_POST['email']) && isset($_POST['password'])){
                         </div>
                 </div>
                 <hr class="mb-4">
-
-                <div class="form-group">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="invalidCheck3" required>
-                        <label class="form-check-label" for="invalidCheck3">
-                            Я подтверждаю согласие на обработку персональных данных в соотвествии с федеральным законом
-                            <a href="http://www.consultant.ru/cons/cgi/online.cgi?req=doc&base=LAW&n=286959&fld=134&dst=1000000001,0&rnd=0.21050761970264387#019597009181987213" target="_blank">№152-ФЗ «О персональных данных»</a>.
-                        </label>
-                        <div class="invalid-feedback">
-                            Необходимо согласие.
-                        </div>
-                    </div>
-                </div>
-
-
-                <hr class="mb-4">
                 <button class="btn btn-primary btn-lg btn-block" type="submit">Зарегистрироваться</button>
                 <button class="btn btn-primary btn-lg btn-block" type="button" onClick='location.href="index.php"'>На главную</button>
             </form>
