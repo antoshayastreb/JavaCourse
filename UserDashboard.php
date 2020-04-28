@@ -9,6 +9,7 @@
         header("Location: Enter.php");
     }
     require('Connect.php');
+    $first_enter = 0;
     $scMess = "";
     $flMess = "";
     $email = "";
@@ -20,7 +21,7 @@
     $oldpasshash = "";
     $ThisStage = 0;
     $MaxStage = 0;
-    $ID = $_SESSION['user_id'];
+    $ID = $_SESSION['user_id'];  
     $sql = "SELECT * FROM jc_students WHERE `ID`=:ID ";
     $sth = $db->prepare($sql);
     $sth->bindValue(':ID', $ID);
@@ -35,7 +36,14 @@
            $oldpasshash = $row[0]['pass_hash'];
            $ingroup = $row[0]['InGroup'];
            $teacher = $row[0]['teacher'];
-           $scMess ="Здравствуйте, ".$row[0]['LastName']." ".$row[0]['FirstName']." ".$row[0]['patronymic'].".";
+           if (isset ($_SESSION['first_enter'])){
+               $first_enter = $_SESSION['first_enter'];
+               $_SESSION['first_enter'] = 0;
+           }
+           if ($first_enter == 1){
+               $scMess ="Здравствуйте, ".$row[0]['LastName']." ".$row[0]['FirstName']." ".$row[0]['patronymic'].". Ваша регистрация прошла успешно! ";
+           }
+           else {$scMess ="Здравствуйте, ".$row[0]['LastName']." ".$row[0]['FirstName']." ".$row[0]['patronymic'].".";}
            $ThisStage = $row[0]['stage'];
            $MaxStage = $ThisStage;
            $_SESSION['stage'] = $ThisStage;
@@ -227,6 +235,7 @@
         }
     }
 ?>
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -244,7 +253,6 @@
 </head>
 
 <body>
-
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
     <a class="navbar-brand" href="#">Java курс</a>
@@ -443,7 +451,8 @@
                     </div>
                 </div>
             <!-- модал удаление данных -->
-            </div><div class="modal fade" id="staticBackdropDelData" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            </div>
+            <div class="modal fade" id="staticBackdropDelData" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
