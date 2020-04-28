@@ -1,41 +1,68 @@
 <?php
 session_start();
 require ('Connect.php');
+$email = "";
+$LastName = "";
+$FirstName = "";
+$patronymic = "";
+            
 if (isset($_POST['email']) && isset($_POST['password'])){
+    //проверка на наличие email в базе
     $email = $_POST['email'];
     $LastName = $_POST['LastName'];
     $FirstName = $_POST['FirstName'];
     $patronymic = $_POST['patronymic'];
-    $password = $_POST['password'];
-    $registered = date("Y-m-d H:i:s");
-    $stage = 1;
-    $pass_hash = password_hash($password, PASSWORD_DEFAULT);
-    $teacher = $_POST['csTeacher'];
-    $InGroup = $_POST['csGroup'];
-    $sth = $db->prepare("INSERT INTO `jc_students` (`ID`, `EMAIL`, `FirstName`, `LastName`, `patronymic`, `InGroup`, `teacher`, `stage`, `registered`, `pass_hash`) VALUES (?,?,?,?,?,?,?,?,?,?)");
-    $sth->execute(array(NULL, $email, $FirstName, $LastName, $patronymic, $InGroup, $teacher, $stage, $registered, $pass_hash));
-    $insert_id = $db->lastInsertId();
+    $sql = "SELECT * FROM jc_students WHERE `email`=:email ";
+    $sth = $db->prepare($sql);
+    $sth->bindValue(':email', $_POST['email']);
+    try {
+        $sth->execute();
+        $row = $sth->fetchAll(PDO::FETCH_ASSOC);
+        if (count($row) > 0) { //если есть, значит запрещаем дальнейшую регистрацию
+            $flMess = 'Такой email уже существует!';
 
-    if ($sth){
-        $smsg = "Регистрация прошла успешно";
-        $sql = "SELECT * FROM jc_students WHERE `email`=:email ";
-        $sth = $db->prepare($sql);
-        $sth->bindValue(':email', $email);
-        try {
-            $sth->execute();
-            $row = $sth->fetchAll(PDO::FETCH_ASSOC);
-            if (count($row) > 0) {
-               $_SESSION['user_id'] = $row[0]['ID'];
-               header("Location: UserDashboard.php");
-            } else $flMess = 'Email не существует!';
+        } else { //если нет, значит регистрируем
+            $email = $_POST['email'];
+            $LastName = $_POST['LastName'];
+            $FirstName = $_POST['FirstName'];
+            $patronymic = $_POST['patronymic'];
+            $password = $_POST['password'];
+            $registered = date("Y-m-d H:i:s");
+            $stage = 1;
+            $pass_hash = password_hash($password, PASSWORD_DEFAULT);
+            $teacher = $_POST['csTeacher'];
+            $InGroup = $_POST['csGroup'];
+            $sth = $db->prepare("INSERT INTO `jc_students` (`ID`, `EMAIL`, `FirstName`, `LastName`, `patronymic`, `InGroup`, `teacher`, `stage`, `registered`, `pass_hash`) VALUES (?,?,?,?,?,?,?,?,?,?)");
+            $sth->execute(array(NULL, $email, $FirstName, $LastName, $patronymic, $InGroup, $teacher, $stage, $registered, $pass_hash));
+            $insert_id = $db->lastInsertId();
+
+            if ($sth){
+                $sql = "SELECT * FROM jc_students WHERE `email`=:email ";
+                $sth = $db->prepare($sql);
+                $sth->bindValue(':email', $email);
+                try {
+                    $sth->execute();
+                    $row = $sth->fetchAll(PDO::FETCH_ASSOC);
+                    if (count($row) > 0) {
+                       $_SESSION['user_id'] = $row[0]['ID'];
+                       $_SESSION['first_enter'] = 1;
+                       header("Location: UserDashboard.php");
+                    } else $flMess = 'Email не существует!';
+                }
+                catch (PDOException $e)
+                {
+                    $flMess = 'Ошибка Базы Данных!';
+                }
+            } else {
+                $fsmsg = "Ошибка";
+            }
         }
-        catch (PDOException $e)
-        {
-            $flMess = 'Ошибка Базы Данных!';
-        }
-    } else {
-        $fsmsg = "Ошибка";
     }
+    catch (PDOException $e)
+    {
+        $flMess = 'Ошибка Базы Данных!';
+    }
+    
 
 }
 ?>
@@ -65,18 +92,19 @@ if (isset($_POST['email']) && isset($_POST['password'])){
     </div>
 
             <?php if(isset($flMess)){?><div class="alert-danger" role="alert"><?php echo $flMess; ?></div><?php }?>
+            <?php if(isset($smsg)){?><div class="alert-success" role="alert"><?php echo $smsg; ?></div><?php  }?>
             <form class="needs-validation" method="POST" action="" novalidate>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="LastName">Фамилия</label>
-                        <input type="text" class="form-control" name="LastName" placeholder="" value="" required>
+                        <input type="text" class="form-control" name="LastName" placeholder="" value="<?php echo $LastName?>" required>
                         <div class="invalid-feedback">
                             Введите фамилию.
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="FirstName">Имя</label>
-                        <input type="text" class="form-control" name="FirstName" placeholder="" value="" required>
+                        <input type="text" class="form-control" name="FirstName" placeholder="" value="<?php echo $FirstName?>" required>
                         <div class="invalid-feedback">
                             Введите имя.
                         </div>
@@ -86,7 +114,7 @@ if (isset($_POST['email']) && isset($_POST['password'])){
                 <div class="mb-3">
                     <label for="patronymic">Отчество</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" name="patronymic" placeholder="" required>
+                        <input type="text" class="form-control" name="patronymic" placeholder="" value="<?php echo $patronymic?>" required>
                         <div class="invalid-feedback" style="width: 100%;">
                             Введите отчество.
                         </div>
@@ -95,7 +123,7 @@ if (isset($_POST['email']) && isset($_POST['password'])){
 
                 <div class="mb-3">
                     <label for="inputEmail">Email </label>
-                    <input type="email" class="form-control" name="email" placeholder="you@example.com" required>
+                    <input type="email" class="form-control" name="email" placeholder="you@example.com" value="<?php echo $email?>" required>
                     <div class="invalid-feedback">
                         Введите адрес електронной почты.
                     </div>
@@ -148,7 +176,7 @@ if (isset($_POST['email']) && isset($_POST['password'])){
                 </div>
                 <hr class="mb-4">
                 <button class="btn btn-primary btn-lg btn-block" type="submit">Зарегистрироваться</button>
-                <button class="btn btn-primary btn-lg btn-block" type="button" onClick='location.href="index.php"'>На главную</button>
+                <button class="btn btn-primary btn-lg btn-block" type="button" onClick='location.href="index.php"'>На главную</button>   
             </form>
 
     <?php
