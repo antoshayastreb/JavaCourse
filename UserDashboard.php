@@ -20,7 +20,9 @@
     $patronymic = "";
     $oldpasshash = "";
     $ThisStage = 0;
+    $MaxAllowedStage = 0;
     $MaxStage = 0;
+    $ThisTheme = "";
     $ID = $_SESSION['user_id'];  
     $sql = "SELECT * FROM jc_students WHERE `ID`=:ID ";
     $sth = $db->prepare($sql);
@@ -45,6 +47,7 @@
            }
            else {$scMess ="Здравствуйте, ".$row[0]['LastName']." ".$row[0]['FirstName']." ".$row[0]['patronymic'].".";}
            $ThisStage = $row[0]['stage'];
+           $MaxAllowedStage = $row[0]['stage'];
            $MaxStage = $ThisStage;
            $_SESSION['stage'] = $ThisStage;
         }
@@ -74,6 +77,20 @@
             if ($_GET['do'] == 'UDEditProfile'){
                 $UDMode = 1;
             }
+            
+            //Темы курса
+            if ($_GET['do'] == 'UDShowFullList'){
+                $UDMode = 2;
+            }
+            
+            //Урок из списка
+            if (($_GET['do'] == 'UDShowFromList')){
+                if (array_key_exists('stage', $_GET)) {
+                    $ThisStage = $_GET['stage'];
+                    $_SESSION['stage'] = $ThisStage;
+                }
+            }
+            
             //Предыдущий урок
             if (($_GET['do'] == 'UDPrevLesson')){
                 if (array_key_exists('stage', $_GET)) {
@@ -267,8 +284,11 @@
             <li class="nav-item active">
                 <a class="nav-link" href="UserDashboard.php?do=UDEditProfile">Профиль</a>
             </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="UserDashboard.php?do=UDShowFullList">Темы курса</a>
+            </li>
         </ul>
-        <button class="btn btn-outline-danger my-2 my-sm-0" onClick='location.href="Enter.php?do=logout"'>Выход</button>
+        <button class="btn btn-outline-danger my-2 my-sm-0" onClick='location.href="index.php?do=logout"'>Выход</button>
     </div>
 </nav>
 
@@ -384,9 +404,108 @@
                 echo "<p>\n";
                 echo "</div>\n";
                 echo "</footer>\n";
+            //просмотр всего курса    
+            }elseif ($UDMode == 2) {
+                //echo "<form method=\"POST\" action=\"\">\n";
+                echo "<h4>Все уроки в курсе:</h4>";
+                $sth = $db->prepare("SELECT * FROM jc_lessons");
+                $sth->execute(array());
+                $array = $sth->fetchAll(PDO::FETCH_ASSOC);
+                echo "<div class=\"table-responsive\">\n";
+                echo "    <table class=\"table table-striped table-sm\">\n";
+                echo "        <thead>\n";
+                echo "        <tr>\n";
+                echo "            <th>№ зад.</th>\n";
+                echo "            <th>Тема</th>\n";
+                echo "            <th>Решено</th>\n";
+                echo "            <th>Действие</th>\n";
+                echo "        </tr>\n";
+                echo "        </thead>\n";
+                echo "        <tbody>\n";
+                $MaxStageNum = 0;
+                //нахождение максимального номера урока
+                $sql = "SELECT MAX(`Stage`) FROM jc_lessons";
+                $sth = $db->prepare($sql);
+                try{
+                    $sth->execute();
+                    $MaxStageNum = $sth->fetchColumn();
+                }catch (PDOException $e) {
+                    $flMess = 'Ошибка Базы Данных!';
+                }
+                $sql = "SELECT `Stage`, `theme` FROM jc_lessons ORDER BY `Stage`";
+                $sth = $db->prepare($sql);
+                        try {
+                            $sth->execute();
+                            $idx = 1;
+                            $row = $sth->fetchAll();
+                            if (count($row) > 0) {
+                                for ($i = 0; $i < count($row);$i++) {
+                                    $NewStage = $row[$i][0];
+                                    $sqlh = "SELECT `checked` FROM jc_homeworks WHERE `user_id`=? AND `stage`=?";
+                                    $sthh = $db->prepare($sqlh);
+                                    //$sthh->bindParam(1, $ID);
+                                    //$sthh->bindParam(2, $NewStage);
+                                    try{
+                                        $sthh->execute(array($ID, $NewStage));
+                                        $rowh = $sthh->fetchAll();
+                                    }catch(PDOException $e){
+                                        $flMess = 'Ошибка Базы Данных!';
+                                    }
+                                    try{
+                                        $sth->execute();
+                                    }catch (PDOException $e) {
+                                        $flMess = 'Ошибка Базы Данных!';
+                                    }
+                                    if (($idx == $row[$i][0]) and ($MaxAllowedStage >= $row[$i][0])) {
+                                        echo "        <tr>\n";
+                                        echo "            <td>" . $row[$i][0] . "</td>\n";
+                                        echo "            <td>" . $row[$i][1] . "</td>\n";
+                                        if (!$rowh == null){
+                                            if ($rowh[0]['checked']==1){
+                                            echo "            <td> Да </td>\n";
+                                        }else{
+                                            echo "            <td> Нет </td>\n";
+                                        }
+                                        }else {
+                                            echo "            <td> Нет дз</td>\n";
+                                        }
+                                        echo "            <td> <button type=\"button\" class=\"btn btn-secondary\" onclick='location.href=\"UserDashboard.php?do=UDShowFromList&stage=" . $row[$i][0] . "\"'>Просмотреть</button></td>\n";
+                                        echo "        </tr>\n";
+                                    }else{
+                                        echo "        <tr>\n";
+                                        echo "            <td>" . $row[$i][0] . "</td>\n";
+                                        echo "            <td>" . $row[$i][1] . "</td>\n";
+                                        if (!$rowh == null){
+                                            if ($rowh[0]['checked']==1){
+                                            echo "            <td> Да </td>\n";
+                                        }else{
+                                            echo "            <td> Нет </td>\n";
+                                        }
+                                        }else {
+                                            echo "            <td> Нет дз</td>\n";
+                                        }
+                                        echo "            <td> </td>\n";
+                                        echo "        </tr>\n";
+                                    }
+                                    $idx++;
+                                }
+                            }    
+                        }catch (PDOException $e) {
+                            $flMess = 'Ошибка Базы Данных!';
+                        }             
             }else{
+                try {
+                    $sth = $db->prepare("SELECT * FROM `jc_lessons` WHERE `Stage`=?");
+                    $sth->execute(array($ThisStage));
+                    $row = $sth->fetchAll(PDO::FETCH_ASSOC);
+                    if (count($row) == 1) {
+                        $ThisTheme = $row [0]['theme'];   
+                    }
+                } catch (PDOException $e) {
+                    $flMess = 'Ошибка Базы Данных!';
+                }    
                 echo "<div class=\"d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom\">\n";
-                echo "<h1 class=\"h2\">".$scMess." Это урок № ".$ThisStage."</h1>\n";
+                echo "<h1 class=\"h2\">".$scMess." Это урок № ".$ThisStage." ".$ThisTheme."</h1>\n";
                 echo "    <div class=\"btn-toolbar mb-2 mb-md-0\">\n";
                 echo "        <div class=\"btn-group mr-2\">\n";
                 echo "            <button class=\"btn btn-sm btn-outline-secondary\" onClick='location.href=\"UserDashboard.php?do=UDPrevLesson&stage=" . $ThisStage . "\"'>Предыдущий</button>\n";
