@@ -11,6 +11,8 @@
     $storeFolder = 'uploads'; // Указываем папку для загрузки
     $FileUploading = false;
     $TDMode = 0;
+    $NewTheme = "";
+    $CurTheme = "";
     $currentGroup = 0;
     require('Connect.php');
     $scMess = "";
@@ -43,6 +45,19 @@
                     $_SESSION['stage'] = $NewStage;
                     $FileUploading = true;
                 }
+            }
+            //запрос на изменение темы урока    
+            if($_GET['do'] == 'TDEDchangeThemeConf'){
+                $TDMode = 22;
+                if ( array_key_exists('stage',$_GET)) {
+                    $NewStage = $_GET['stage'];
+                    $sth = $db->prepare("SELECT * FROM `jc_lessons` WHERE `Stage`=?");
+                    $sth->execute(array($NewStage));
+                    $array = $sth->fetchAll(PDO::FETCH_ASSOC);
+                    if (count($array) == 1){
+                        $CurTheme = $array [0]['theme'];
+                    }
+                }
 
             }
             //добавление нового урока
@@ -74,7 +89,7 @@
                     header("Location: Lesson.php");
                 }
             }
-
+            
             //удаление урока
             if($_GET['do'] == 'TDEDdelete'){
                 $TDMode = 2;
@@ -239,6 +254,25 @@
             }
             header("Location: TeacherDashboard.php?do=TDEGview");
         }
+        if (array_key_exists('theme-name',$_POST)){
+            $NewTheme = $_POST['theme-name'];
+            $TDMode = 2;
+                if ( array_key_exists('stage',$_GET)) {
+                    $NewStage = $_GET['stage'];
+                    try {
+                        $sql="UPDATE `jc_lessons` SET `theme` = ? WHERE `Stage` = ?";
+                        $sth = $db->prepare($sql);
+                        $sth->bindParam(1,$NewTheme);
+                        $sth->bindParam(2,$NewStage);
+                        $db->beginTransaction();
+                        $sth->execute();
+                        $db->commit();
+                    } catch(PDOException $e){
+                        $flMess = 'Ошибка Базы Данных!';
+                    }
+                    header("Location: TeacherDashboard.php?do=TDEDshow");        
+                }
+        }
     }
         if (!empty($_FILES)) { // Проверяем пришли ли файлы от клиента
             //$FileUploading = true;
@@ -305,10 +339,10 @@
                 <a class="nav-link" href="TeacherDashboard.php?do=TDEGview">Учебные группы</a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="TeacherDashboard.php?do=TDEDshow">Редактор урока</a>
+                <a class="nav-link" href="TeacherDashboard.php?do=TDEDshow">Редактор курса</a>
             </li>
         </ul>
-        <button class="btn btn-outline-danger my-2 my-sm-0" onClick='location.href="TeacherEnter.php?do=logout"'>Выход</button>
+        <button class="btn btn-outline-danger my-2 my-sm-0" onClick='location.href="index.php?do=logout"'>Выход</button>
     </div>
 </nav>
 
@@ -403,12 +437,13 @@
                     }
                     print("<a href=\"TeacherDashboard.php?do=TDEDshow\">Назад</a>");
                 }else{
-                    echo "<h4>Уроки в базе данных:</h4>";
+                    echo "<h4>Уроки в курсе:</h4>";
                     echo "<div class=\"table-responsive\">\n";
                     echo "    <table class=\"table table-striped table-sm\">\n";
                     echo "        <thead>\n";
                     echo "        <tr>\n";
                     echo "            <th>Порядковый номер урока в курсе</th>\n";
+                    echo "            <th>Тема урока</th>\n";
                     echo "            <th>Дата и время загрузки</th>\n";
                     echo "            <th>Действие</th>\n";
                     echo "        </tr>\n";
@@ -426,7 +461,7 @@
                     }
                     //загрузка таблицы
                     if ($MaxStageNum > 0) {
-                        $sql = "SELECT `Stage`, `UpLoadDate` FROM jc_lessons ORDER BY `Stage`";
+                        $sql = "SELECT `Stage`, `theme`, `UpLoadDate` FROM jc_lessons ORDER BY `Stage`";
                         $sth = $db->prepare($sql);
                         try {
                             $sth->execute();
@@ -438,6 +473,7 @@
                                         echo "        <tr>\n";
                                         echo "            <td>Новый урок №" . $idx . "</td>\n";
                                         echo "            <td></td>\n";
+                                        echo "            <td></td>\n";
                                         echo "            <td><button type=\"button\" class=\"btn btn-primary\" onclick='location.href=\"TeacherDashboard.php?do=TDEDadd&stage=" . $idx . "\"'>Добавить</button></td>\n";
                                         echo "        </tr>\n";
                                         $idx++;
@@ -446,7 +482,8 @@
                                         echo "        <tr>\n";
                                         echo "            <td> Урок № " . $row[$i][0] . "</td>\n";
                                         echo "            <td>" . $row[$i][1] . "</td>\n";
-                                        echo "            <td><button type=\"button\" class=\"btn btn-primary\" onclick='location.href=\"TeacherDashboard.php?do=TDEDchange&stage=" . $row[$i][0] . "\"'>Изменить</button>" . " <button type=\"button\" class=\"btn btn-warning\" onclick='location.href=\"TeacherDashboard.php?do=TDEDdelConf&stage=" . $row[$i][0] . "\"'>Удалить</button>" . " <button type=\"button\" class=\"btn btn-secondary\" onclick='location.href=\"TeacherDashboard.php?do=TDEDview&stage=" . $row[$i][0] . "\"'>Просмотреть</button></td>\n";
+                                        echo "            <td>" . $row[$i][2] . "</td>\n";
+                                        echo "            <td><button type=\"button\" class=\"btn btn-info\" onclick='location.href=\"TeacherDashboard.php?do=TDEDchangeThemeConf&stage=" . $row[$i][0] . "\"'>Изменить тему</button>" . " <button type=\"button\" class=\"btn btn-primary\" onclick='location.href=\"TeacherDashboard.php?do=TDEDchange&stage=" . $row[$i][0] . "\"'>Изменить урок</button>" . " <button type=\"button\" class=\"btn btn-warning\" onclick='location.href=\"TeacherDashboard.php?do=TDEDdelConf&stage=" . $row[$i][0] . "\"'>Удалить</button>" . " <button type=\"button\" class=\"btn btn-secondary\" onclick='location.href=\"TeacherDashboard.php?do=TDEDview&stage=" . $row[$i][0] . "\"'>Просмотреть</button></td>\n";
                                         echo "        </tr>\n";
                                     }
                                     $idx++;
@@ -459,6 +496,7 @@
                     //футер таблицы
                     echo "        <tr>\n";
                     echo "            <td>Новый урок №" . ($MaxStageNum + 1) . "</td>\n";
+                    echo "            <td></td>\n";
                     echo "            <td></td>\n";
                     echo "            <td><button type=\"button\" class=\"btn btn-primary\" onclick='location.href=\"TeacherDashboard.php?do=TDEDadd&stage=" . ($MaxStageNum + 1) . "\"'>Добавить</button></td>\n";
                     echo "        </tr>\n";
@@ -484,6 +522,33 @@
                 echo"        </div>\n";
                 echo"    </div>\n";
                 echo"</div>\n";
+                
+            }elseif ($TDMode == 22){
+                //запрос на изменение темы урока
+                echo"<div class=\"modal fade\" id=\"staticBackdrop\" data-backdrop=\"static\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"staticBackdropLabel\" aria-hidden=\"true\">\n";
+                echo "   <div class=\"modal-dialog\" role=\"document\">\n";
+                echo"        <div class=\"modal-content\">\n";
+                echo "           <div class=\"modal-header\">\n";
+                echo"                <h5 class=\"modal-title\" id=\"staticBackdropLabel\">Изменить тему урока № ".$NewStage."</h5>\n";
+                echo"            </div>\n";
+                echo"            <div class=\"modal-body\">\n";
+                echo"            <form method=\"post\">\n";
+                echo"               <div class=\"form-row\">";
+                //echo"                   <div class=\"col-md-4 mb-3\">";
+                echo"                       <label>Тема урока: </label>";
+                echo"                       <input type=\"text\" class=\"form-control\" name=\"theme-name\" value=\"$CurTheme\">";
+                //echo"                   </div>";
+                echo"              </div>";
+                echo"              <br>\n";
+                echo"              <button class=\"btn btn-primary btn-lg\" type=\"submit\">Изменить</button>\n";
+                echo"              <button type=\"button\" class=\"btn btn-primary btn-lg\"  onclick='location.href=\"TeacherDashboard.php?do=TDEDshow\"'>Отказаться</button>\n";
+                echo"           </form>\n";
+                echo"            </div>\n";
+                echo"        </div>\n";
+                echo"    </div>\n";
+                echo"</div>\n";
+                
+                
             }elseif($TDMode == 3) {
                 //личный кабинет
             }else{
@@ -516,8 +581,8 @@
                 echo "</select>\n";
                 echo "<button class=\"btn btn-primary btn-lg btn-block\" type=\"submit\">Показать</button>";
                 echo "</form>\n";
-                $sth = $db->prepare("SELECT * FROM jc_students WHERE `InGroup`=?");
-                $sth->execute(array($currentGroup));
+                $sth = $db->prepare("SELECT * FROM jc_students WHERE `InGroup`=? AND `teacher`=?");
+                $sth->execute(array($currentGroup, $ID));
                 $array = $sth->fetchAll(PDO::FETCH_ASSOC);
                 $counter = 1;
                 echo "<div class=\"table-responsive\">\n";
@@ -573,11 +638,11 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
         <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
         <script>
-            feather.replace()
+            feather.replace();
         </script>
         <?php
         require ('Disconnect.php');
-        if (($TDMode == 11)| ($TDMode == 21)){
+        if (($TDMode == 11)| ($TDMode == 21) | ($TDMode == 22)){
             echo "<!-- Скрипт, вызывающий модальное окно после загрузки страницы -->\n";
             echo "<script>\n";
             echo "    $(document).ready(function() {\n";
