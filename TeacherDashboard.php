@@ -25,7 +25,7 @@
         $sth->execute();
         $row = $sth->fetchAll(PDO::FETCH_ASSOC);
         if (count($row) > 0) {
-            $scMess ="Добро пожаловать, ".$row[0]['LastName']." ".$row[0]['FirstName']." ".$row[0]['patronymic'];
+            $scMess =" ";
         }
     }
     catch (PDOException $e)
@@ -342,7 +342,9 @@
                 <a class="nav-link" href="TeacherDashboard.php?do=TDEDshow">Редактор курса</a>
             </li>
         </ul>
-        <button class="btn btn-outline-danger my-2 my-sm-0" onClick='location.href="index.php?do=logout"'>Выход</button>
+        <span class="navbar-text">
+            <?php echo $row[0]['LastName'], ' ', $row[0]['FirstName'], ' ', $row[0]['patronymic']?> <a href="index.php?do=logout">Выход</a>
+        </span>
     </div>
 </nav>
 
