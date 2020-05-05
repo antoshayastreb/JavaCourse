@@ -43,9 +43,9 @@
                $_SESSION['first_enter'] = 0;
            }
            if ($first_enter == 1){
-               $scMess ="Здравствуйте, ".$row[0]['LastName']." ".$row[0]['FirstName']." ".$row[0]['patronymic'].". Ваша регистрация прошла успешно! ";
+               $scMess ="Ваша регистрация прошла успешно! ";
            }
-           else {$scMess ="Здравствуйте, ".$row[0]['LastName']." ".$row[0]['FirstName']." ".$row[0]['patronymic'].".";}
+           else {$scMess ="";}
            $ThisStage = $row[0]['stage'];
            $MaxAllowedStage = $row[0]['stage'];
            $MaxStage = $ThisStage;
@@ -287,8 +287,11 @@
             <li class="nav-item active">
                 <a class="nav-link" href="UserDashboard.php?do=UDShowFullList">Темы курса</a>
             </li>
+            
         </ul>
-        <button class="btn btn-outline-danger my-2 my-sm-0" onClick='location.href="index.php?do=logout"'>Выход</button>
+        <span class="navbar-text">
+            <?php echo $row[0]['LastName'], ' ', $row[0]['FirstName'], ' ', $row[0]['patronymic']?> <a href="index.php?do=logout">Выход</a>
+        </span>
     </div>
 </nav>
 
@@ -505,7 +508,7 @@
                     $flMess = 'Ошибка Базы Данных!';
                 }    
                 echo "<div class=\"d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom\">\n";
-                echo "<h1 class=\"h2\">".$scMess." Это урок № ".$ThisStage." ".$ThisTheme."</h1>\n";
+                echo "<h1 class=\"h2\">".$scMess." Урок № ".$ThisStage." ".$ThisTheme."</h1>\n";
                 echo "    <div class=\"btn-toolbar mb-2 mb-md-0\">\n";
                 echo "        <div class=\"btn-group mr-2\">\n";
                 echo "            <button class=\"btn btn-sm btn-outline-secondary\" onClick='location.href=\"UserDashboard.php?do=UDPrevLesson&stage=" . $ThisStage . "\"'>Предыдущий</button>\n";
