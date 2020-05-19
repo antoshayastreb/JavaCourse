@@ -4,7 +4,7 @@
     $ds = DIRECTORY_SEPARATOR;
     $LoadFile = false;
     $storeFolder = 'uploads'; // Указываем папку для загрузки
-    $UDMode = 0;
+    //$UDMode = 0;
     if (!isset($_SESSION['user_id'])) {
         header("Location: Enter.php");
     }
@@ -27,6 +27,68 @@
     $sql = "SELECT * FROM jc_students WHERE `ID`=:ID ";
     $sth = $db->prepare($sql);
     $sth->bindValue(':ID', $ID);
+    
+    include ('Commands.php');
+    
+    class UDEditProfile implements Command
+    {
+        private $Invoker;
+        
+        public function __construct(Invoker $inv)
+        {
+            $this->Invoker = $inv;
+        }
+        public function execute(): void
+        {
+            $this->Invoker->mode = 1;
+        }
+    }
+    
+    class UDShowFullList implements Command
+    {
+        private $Invoker;
+        
+        public function __construct(Invoker $inv)
+        {
+            $this->Invoker = $inv;
+        }
+        public function execute(): void
+        {
+            $this->Invoker->mode = 2;
+        }
+    }
+    
+    class UDChgHM implements Command
+    {
+        
+        public function __construct()
+        {
+
+        }
+        public function execute(): void
+        {
+            if (array_key_exists('stage', $_GET)) {
+                    $NewStage = $_GET['stage'];
+                    $ID = $_SESSION['user_id'];
+                    try {
+                        $db = new PDO('mysql:dbname=javacourses;host=localhost','root','');
+                        $sql = "DELETE FROM `jc_homeworks` WHERE `user_id`=? AND `stage`=?";
+                        $sth = $db->prepare($sql);
+                        $sth->execute(array($ID, $NewStage));
+                        $db = null;
+                    } catch (PDOException $e) {
+                        $flMess = 'Ошибка Базы Данных!';
+                    }
+                    header("Location: UserDashboard.php");
+                }
+        }
+    }
+    
+    $UDInvoker = new Invoker();
+    $UDInvoker->setUDEditProfile(new UDEditProfile($UDInvoker));
+    $UDInvoker->setUDShowFullList(new UDShowFullList($UDInvoker));
+    $UDInvoker->setUDChgHM(new UDChgHM());
+    
     try {
         $sth->execute();
         $row = $sth->fetchAll(PDO::FETCH_ASSOC);
@@ -56,11 +118,14 @@
     {
         $flMess = 'Ошибка Базы Данных!';
     }
+    
+    $UDInvoker->comExect();
+    
     //команды
     if (count($_GET)>0) {
         if (array_key_exists('do', $_GET)) {
             //удаление ДЗ
-            if (($_GET['do'] == 'UDDelHM')|($_GET['do'] == 'UDChgHM')) {
+            /*if (($_GET['do'] == 'UDDelHM')|($_GET['do'] == 'UDChgHM')) {
                 if (array_key_exists('stage', $_GET)) {
                     $NewStage = $_GET['stage'];
                     try {
@@ -72,16 +137,16 @@
                     }
                     header("Location: UserDashboard.php");
                 }
-            }
+            }*/
             //редактировать профиль
-            if ($_GET['do'] == 'UDEditProfile'){
+            /*if ($_GET['do'] == 'UDEditProfile'){
                 $UDMode = 1;
-            }
+            }*/
             
             //Темы курса
-            if ($_GET['do'] == 'UDShowFullList'){
+            /*if ($_GET['do'] == 'UDShowFullList'){
                 $UDMode = 2;
-            }
+            }*/
             
             //Урок из списка
             if (($_GET['do'] == 'UDShowFromList')){
@@ -304,7 +369,7 @@
             if (strlen($flMess) > 0) {
                 print("<h1 class=\"h2\">" . $flMess . "</h1>");
             }
-            if($UDMode == 1) {
+            if($UDInvoker->mode == 1) {
                 //редактор профиля
                 echo "<form method=\"POST\">";
                 echo "<div class=\"form-row\">";
@@ -408,7 +473,7 @@
                 echo "</div>\n";
                 echo "</footer>\n";
             //просмотр всего курса    
-            }elseif ($UDMode == 2) {
+            }elseif ($UDInvoker->mode == 2) {
                 //echo "<form method=\"POST\" action=\"\">\n";
                 echo "<h4>Все уроки в курсе:</h4>";
                 $sth = $db->prepare("SELECT * FROM jc_lessons");
