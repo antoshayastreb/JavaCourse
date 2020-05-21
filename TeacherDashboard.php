@@ -4,16 +4,16 @@
     if (!isset($_SESSION['teach_id'])) {
         header("Location: TeacherEnter.php");
     }
-    $NewGroup = "";
+    //$NewGroup = "";
     $DeletingGroupID = 0;
     $ds = DIRECTORY_SEPARATOR;
     $LoadFile = false;
     $storeFolder = 'uploads'; // Указываем папку для загрузки
-    $FileUploading = false;
-    $TDMode = 0;
+    //$FileUploading = false;
+    //$TDMode = 0;
     $NewTheme = "";
-    $CurTheme = "";
-    $currentGroup = 0;
+    //$CurTheme = "";
+    //$currentGroup = 0;
     require('Connect.php');
     $scMess = "";
     $flMess = "";
@@ -32,22 +32,396 @@
     {
         $flMess = 'Ошибка Базы Данных!';
     }
+    
+    include ('Commands.php');
+    
+    
+    class TDEDshow implements Command
+    {
+        private $Invoker;
+        
+        public function __construct(Invoker $inv)
+        {
+            $this->Invoker = $inv;
+        }
+        public function execute(): void
+        {
+            $this->Invoker->mode = 2;
+        }
+    }
+    
+    class TDEDchange implements Command
+    {
+        private $Invoker;
+        
+        public function __construct(Invoker $inv)
+        {
+            $this->Invoker = $inv;
+        }
+        public function execute(): void
+        {
+            $this->Invoker->mode = 2;
+            if ( array_key_exists('stage',$_GET)){
+                    $this->Invoker->NewStage = $_GET['stage'];
+                    $_SESSION['stage'] = $this->Invoker->NewStage;
+                    $this->Invoker->FileUploading = true;
+                }
+        }
+    }
+    
+    class TDEDchangeThemeConf implements Command
+    {
+        private $Invoker;
+        
+        public function __construct(Invoker $inv)
+        {
+            $this->Invoker = $inv;
+        }
+        public function execute(): void
+        {
+            $this->Invoker->mode = 22;
+            if ( array_key_exists('stage',$_GET)) {
+                    $this->Invoker->NewStage = $_GET['stage'];
+                    try {
+                        $db = new PDO('mysql:dbname=javacourses;host=localhost','root','');
+                        $sth = $db->prepare("SELECT * FROM `jc_lessons` WHERE `Stage`=?");
+                        $sth->execute(array($this->Invoker->NewStage));
+                        $array = $sth->fetchAll(PDO::FETCH_ASSOC);
+                        if (count($array) == 1){
+                            $this->Invoker->CurTheme = $array [0]['theme'];
+                        }
+                        $db = null;
+                    } catch (PDOException $e) {
+                        $flMess = 'Ошибка Базы Данных!';
+                    }    
+                }
+        }
+    }
+    
+    class TDEDadd implements Command
+    {
+        private $Invoker;
+        
+        public function __construct(Invoker $inv)
+        {
+            $this->Invoker = $inv;
+        }
+        public function execute(): void
+        {
+            $this->Invoker->mode = 2;
+            if ( array_key_exists('stage',$_GET)) {
+                    $this->Invoker->NewStage = $_GET['stage'];
+                    $_SESSION['stage'] = $this->Invoker->NewStage;
+                    $this->Invoker->FileUploading = true;
+                    $DT = date("Y-m-d H:i:s");
+                    try {
+                        $db = new PDO('mysql:dbname=javacourses;host=localhost','root','');
+                        $sql="INSERT INTO jc_lessons (`ID`, `Stage`, `body`, `UpLoadDate`) VALUES (?,?,?,?)";
+                        $sth = $db->prepare($sql);
+                        $sth->execute(array(NULL, $this->Invoker->NewStage, 'PDF - файл не загружен', $DT));
+                        $insert_id = $db->lastInsertId();
+                        $db = null;
+                    } catch(PDOException $e){
+                        $flMess = 'Ошибка Базы Данных!';
+                    }
+
+                }
+        }
+    }
+    
+    class TDEDview implements Command
+    {
+        private $Invoker;
+        
+        public function __construct(Invoker $inv)
+        {
+            $this->Invoker = $inv;
+        }
+        public function execute(): void
+        {
+            $this->Invoker->mode = 2;
+            if ( array_key_exists('stage',$_GET)) {
+                    $this->Invoker->NewStage = $_GET['stage'];
+                    $_SESSION['stage'] = $this->Invoker->NewStage;
+                    header("Location: Lesson.php");
+                }
+        }
+    }
+    
+    class TDEGview implements Command
+    {
+        private $Invoker;
+        
+        public function __construct(Invoker $inv)
+        {
+            $this->Invoker = $inv;
+        }
+        public function execute(): void
+        {
+            $this->Invoker->mode = 1;
+        }
+    }
+    
+    class TDEDdelete implements Command
+    {
+        private $Invoker;
+        
+        public function __construct(Invoker $inv)
+        {
+            $this->Invoker = $inv;
+        }
+        public function execute(): void
+        {
+            $this->Invoker->mode = 2;
+            if ( array_key_exists('stage',$_GET)) {
+                    $this->Invoker->NewStage = $_GET['stage'];
+                    try {
+                        $db = new PDO('mysql:dbname=javacourses;host=localhost','root','');
+                        $sql="DELETE FROM `jc_lessons` WHERE `Stage`=?";
+                        $sth = $db->prepare($sql);
+                        $sth->execute(array($this->Invoker->NewStage));
+                        $db = null;
+                    } catch(PDOException $e){
+                        $flMess = 'Ошибка Базы Данных!';
+                    }
+
+                }
+        }
+    }
+    
+    class TDEDdelConf implements Command
+    {
+        private $Invoker;
+        
+        public function __construct(Invoker $inv)
+        {
+            $this->Invoker = $inv;
+        }
+        public function execute(): void
+        {
+            $this->Invoker->mode = 21;
+            if ( array_key_exists('stage',$_GET)) {
+                    $this->Invoker->NewStage = $_GET['stage'];
+                }
+        }
+    }
+    
+    class TDSDAddStage implements Command
+    {
+        private $Invoker;
+        
+        public function __construct(Invoker $inv)
+        {
+            $this->Invoker = $inv;
+        }
+        public function execute(): void
+        {
+            if ( array_key_exists('user_id',$_GET)) {
+                    $this->Invoker->ThisID = $_GET['user_id'];
+                    try {
+                        $db = new PDO('mysql:dbname=javacourses;host=localhost','root','');
+                        $sth = $db->prepare("SELECT * FROM jc_students WHERE `ID`=?");
+                        $sth->execute(array($this->Invoker->ThisID));
+                        $array = $sth->fetchAll(PDO::FETCH_ASSOC);
+                        if (count($array) == 1) {
+                            $this->Invoker->ThisStage = $array [0]['stage'];
+                            $Chk=1;
+                            $sth = $db->prepare("UPDATE jc_homeworks SET `checked` = ?  WHERE `user_id`=? AND `stage`=?");
+                            $sth->execute(array($Chk, $this->Invoker->ThisID, $ThisStage));
+                            $this->Invoker->ThisStage++;
+                            $sth = $db->prepare("UPDATE jc_students SET `stage` = ?  WHERE `ID`=?");
+                            $sth->execute(array($this->Invoker->ThisStage, $this->Invoker->ThisID));
+                        }
+                        $db = null;
+                    } catch (PDOException $e) {
+                        $flMess = 'Ошибка Базы Данных!';
+                    }
+                }
+                if ( array_key_exists('InGroup',$_GET)) {
+                    $this->Invoker->currentGroup =  $_GET['InGroup'];
+                    }
+        }
+    }
+    
+    class TDSDDownload implements Command
+    {
+        private $Invoker;
+        
+        public function __construct(Invoker $inv)
+        {
+            $this->Invoker = $inv;
+        }
+        public function execute(): void
+        {
+            if ( array_key_exists('user_id',$_GET)) {
+                    $this->Invoker->ThisID = $_GET['user_id'];
+                    if (array_key_exists('stage', $_GET)) {
+                        $this->Invoker->ThisStage = $_GET['stage'];
+                        if (array_key_exists('InGroup', $_GET)) {
+                            $this->Invoker->currentGroup = $_GET['InGroup'];
+                            // сбрасываем буфер вывода PHP, чтобы избежать переполнения памяти выделенной под скрипт
+                            // если этого не сделать файл будет читаться в память полностью!
+                            if (ob_get_level()) {
+                                ob_end_clean();
+                            }
+                            $db = new PDO('mysql:dbname=javacourses;host=localhost','root','');
+                            $sth = $db->prepare("SELECT * FROM jc_students WHERE `ID`=?");
+                            $sth->execute(array($ThisID));
+                            $array = $sth->fetchAll(PDO::FETCH_ASSOC);
+                            $svFileName = "ДЗ.zip";
+                            if (count($array)) {
+                                $svFileName = $array[0]['LastName']."_".$array[0]['FirstName']."_Урок № ".$this->Invoker->ThisStage.".zip";
+                                $svFileName = rus2translit($svFileName);
+                                }
+                            $sth = $db->prepare("SELECT `body` FROM jc_homeworks  WHERE `user_id`=? AND `stage`=?");
+                            $sth->execute(array($this->Invoker->ThisID,$this->Invoker->ThisStage));
+                            $sth->bindColumn(1, $lob, PDO::PARAM_LOB);
+                            $sth->fetch(PDO::FETCH_BOUND);
+                            $FileSize = strlen($lob);
+                            // заставляем браузер показать окно сохранения файла
+                            header('Content-Description: File Transfer');
+                            header('Content-Type: application/octet-stream');
+                            header('Content-Disposition: attachment; filename=' . basename($svFileName));
+                            header('Content-Transfer-Encoding: binary');
+                            header('Expires: 0');
+                            header('Cache-Control: must-revalidate');
+                            header('Pragma: public');
+                            header('Content-Length: '.$FileSize);
+                            // читаем файл и отправляем его пользователю
+                            echo $lob;
+                            $db = null;
+                            exit;
+                        }
+                    }
+                }
+        }
+    }
+    
+    class TDEGdelete implements Command
+    {
+        private $Invoker;
+        
+        public function __construct(Invoker $inv)
+        {
+            $this->Invoker = $inv;
+        }
+        public function execute(): void
+        {
+            $this->Invoker->mode = 1;
+                if ( array_key_exists('id',$_GET)) {
+                    $this->Invoker->ThisID = $_GET['id'];
+                    try {
+                        //Достаем всех студентов в удаляемой группе
+                        $db = new PDO('mysql:dbname=javacourses;host=localhost','root','');
+                        $sth = $db->prepare("SELECT * FROM jc_students WHERE `InGroup`=?");
+                        $sth->execute(array($this->Invoker->ThisID));
+                        $array = $sth->fetchAll(PDO::FETCH_ASSOC);
+                        if (count($array)) {
+                            foreach ($array as $key => $value) {
+                                //удаляем все ДЗ
+                                $tmpSql = $db->prepare("DELETE FROM jc_homeworks WHERE `user_id`=?");
+                                $tmpSql->execute(array($value['ID']));
+                            }
+                        }
+                        //удаляем всех студентов
+                        $sql="DELETE FROM jc_students WHERE `InGroup`=?";
+                        $sql = $db->prepare($sql);
+                        $sql->execute(array($this->Invoker->ThisID));
+                        //удаляем группу
+                        $sql="DELETE FROM `jc_groups` WHERE `ID`=?";
+                        $sth = $db->prepare($sql);
+                        $sth->execute(array($this->Invoker->ThisID));
+                        $db = null;
+                    } catch(PDOException $e){
+                        $flMess = 'Ошибка Базы Данных!';
+                    }
+                    header("Location: TeacherDashboard.php?do=TDEGview");
+                }
+        }
+    }
+    
+    class TDEGdelConf implements Command
+    {
+        private $Invoker;
+        
+        public function __construct(Invoker $inv)
+        {
+            $this->Invoker = $inv;
+        }
+        public function execute(): void
+        {
+            $this->Invoker->mode = 11;
+                 if ( array_key_exists('id',$_GET)) {
+                    $this->Invoker->ThisID = $_GET['id'];
+                    try {
+                        $db = new PDO('mysql:dbname=javacourses;host=localhost','root','');
+                        $sql="SELECT * FROM jc_groups WHERE `ID`=?";
+                        $sth = $db->prepare($sql);
+                        $sth->execute(array($this->Invoker->ThisID));
+                        $array = $sth->fetchAll(PDO::FETCH_ASSOC);
+                        if (count($array)){
+                            $this->Invoker->NewGroup = $array[0]['Name'];
+                        }
+                        $db = null;
+                    } catch(PDOException $e){
+                        $flMess = 'Ошибка Базы Данных!';
+                    }
+                }
+        }
+    }
+    
+    class TDEPshow implements Command
+    {
+        private $Invoker;
+        
+        public function __construct(Invoker $inv)
+        {
+            $this->Invoker = $inv;
+        }
+        public function execute(): void
+        {
+            $this->Invoker->mode = 3;
+       
+        }
+    }
+    
+    
+    $TDInvoker = new Invoker();
+    $TDInvoker->setTDEDshow(new TDEDshow($TDInvoker));
+    $TDInvoker->setTDEDchange(new TDEDchange($TDInvoker));
+    $TDInvoker->setTDEDchangeThemeConf(new TDEDchangeThemeConf($TDInvoker));
+    $TDInvoker->setTDEDadd(new TDEDadd($TDInvoker));
+    $TDInvoker->setTDEDview(new TDEDview($TDInvoker));
+    $TDInvoker->setTDEGview(new TDEGview($TDInvoker));
+    $TDInvoker->setTDEDdelete(new TDEDdelete($TDInvoker));
+    $TDInvoker->setTDEDdelConf(new TDEDdelConf($TDInvoker));
+    $TDInvoker->setTDSDAddStage(new TDSDAddStage($TDInvoker));
+    $TDInvoker->setTDSDDownload(new TDSDDownload($TDInvoker));
+    $TDInvoker->setTDEGdelete(new TDEGdelete($TDInvoker));
+    $TDInvoker->setTDEGdelConf(new TDEGdelConf($TDInvoker));
+    $TDInvoker->setTDEPshow(new TDEPshow($TDInvoker));
+    
+    
+    
+    $TDInvoker->comExect();
+    
+    
     if (count($_GET)>0) {
         //команды
         if ( array_key_exists('do',$_GET)){
-            if($_GET['do'] == 'TDEDshow'){
+            /*if($_GET['do'] == 'TDEDshow'){
                 $TDMode = 2;
-            }
-            if($_GET['do'] == 'TDEDchange'){
+            }*/
+            /*if($_GET['do'] == 'TDEDchange'){
                 $TDMode = 2;
                 if ( array_key_exists('stage',$_GET)){
                     $NewStage = $_GET['stage'];
                     $_SESSION['stage'] = $NewStage;
                     $FileUploading = true;
                 }
-            }
+            }*/
             //запрос на изменение темы урока    
-            if($_GET['do'] == 'TDEDchangeThemeConf'){
+            /*if($_GET['do'] == 'TDEDchangeThemeConf'){
                 $TDMode = 22;
                 if ( array_key_exists('stage',$_GET)) {
                     $NewStage = $_GET['stage'];
@@ -57,12 +431,12 @@
                     if (count($array) == 1){
                         $CurTheme = $array [0]['theme'];
                     }
-                }
+                }*/
 
             }
             //добавление нового урока
-            if($_GET['do'] == 'TDEDadd'){
-                $TDMode = 2;
+            /*if($_GET['do'] == 'TDEDadd'){
+                $TDInvoker->mode = 2;
                 if ( array_key_exists('stage',$_GET)) {
                     $NewStage = $_GET['stage'];
                     $_SESSION['stage'] = $NewStage;
@@ -81,17 +455,17 @@
             }
 
             //просмотр урока
-            if($_GET['do'] == 'TDEDview'){
+            /*if($_GET['do'] == 'TDEDview'){
                 $TDMode = 2;
                 if ( array_key_exists('stage',$_GET)) {
                     $NewStage = $_GET['stage'];
                     $_SESSION['stage'] = $NewStage;
                     header("Location: Lesson.php");
                 }
-            }
+            }*/
             
             //удаление урока
-            if($_GET['do'] == 'TDEDdelete'){
+            /*if($_GET['do'] == 'TDEDdelete'){
                 $TDMode = 2;
                 if ( array_key_exists('stage',$_GET)) {
                     $NewStage = $_GET['stage'];
@@ -104,16 +478,16 @@
                     }
 
                 }
-            }
+            }*/
             //запрос на удаление урока
-            if($_GET['do'] == 'TDEDdelConf'){
+            /*if($_GET['do'] == 'TDEDdelConf'){
                 $TDMode = 21;
                 if ( array_key_exists('stage',$_GET)) {
                     $NewStage = $_GET['stage'];
                 }
-            }
+            }*/
             //Продвинуть студента по урокам вперед
-            if($_GET['do'] == 'TDSDAddStage'){
+            /*if($_GET['do'] == 'TDSDAddStage'){
                 if ( array_key_exists('user_id',$_GET)) {
                     $ThisID = $_GET['user_id'];
                     try {
@@ -136,15 +510,15 @@
                 if ( array_key_exists('InGroup',$_GET)) {
                     $currentGroup =  $_GET['InGroup'];
                     }
-            }
+            }*/
             //скачать ДЗ
-            if($_GET['do'] == 'TDSDDownload'){
+            /*if($_GET['do'] == 'TDSDDownload'){
                 if ( array_key_exists('user_id',$_GET)) {
                     $ThisID = $_GET['user_id'];
                     if (array_key_exists('stage', $_GET)) {
                         $ThisStage = $_GET['stage'];
                         if (array_key_exists('InGroup', $_GET)) {
-                            $currentGroup = $_GET['InGroup'];
+                            $this->Invoker->currentGroup = $_GET['InGroup'];
                             // сбрасываем буфер вывода PHP, чтобы избежать переполнения памяти выделенной под скрипт
                             // если этого не сделать файл будет читаться в память полностью!
                             if (ob_get_level()) {
@@ -178,12 +552,12 @@
                         }
                     }
                 }
-            }
-            if($_GET['do'] == 'TDEGview'){
+            }*/
+            /*if($_GET['do'] == 'TDEGview'){
                 //редактор групп - просмотр
                 $TDMode = 1;
-            }
-            if($_GET['do'] == 'TDEGdelete'){
+            }*/
+            /*if($_GET['do'] == 'TDEGdelete'){
                 //редактор групп - удаление группы
                 $TDMode = 1;
                 if ( array_key_exists('id',$_GET)) {
@@ -213,8 +587,8 @@
                     }
                     header("Location: TeacherDashboard.php?do=TDEGview");
                 }
-            }
-            if($_GET['do'] == 'TDEGdelConf'){
+            }*/
+            /*if($_GET['do'] == 'TDEGdelConf'){
                 //редактор групп - запрос на удаление группы
                 $TDMode = 11;
                 if ( array_key_exists('id',$_GET)) {
@@ -232,22 +606,21 @@
                     }
                 }
             }
-            if($_GET['do'] == 'TDEPshow'){
+            /*if($_GET['do'] == 'TDEPshow'){
                 $TDMode = 3;
-            }
+            }*/
         }
 
-    }
     if (count($_POST)>0) {
         if ( array_key_exists('csGroup',$_POST)) {
-            $currentGroup = $_POST['csGroup'];
+            $TDInvoker->currentGroup = $_POST['csGroup'];
         }
         if ( array_key_exists('newGroup',$_POST)) {
-            $NewGroup = $_POST['newGroup'];
+            $TDInvoker->NewGroup = $_POST['newGroup'];
             try {
                 $sql="INSERT INTO jc_groups (`ID`, `Name`) VALUES (?,?)";
                 $sth = $db->prepare($sql);
-                $sth->execute(array(NULL, $NewGroup));
+                $sth->execute(array(NULL, $TDInvoker->NewGroup));
                 $insert_id = $db->lastInsertId();
             } catch(PDOException $e){
                 $flMess = 'Ошибка Базы Данных!';
@@ -256,7 +629,7 @@
         }
         if (array_key_exists('theme-name',$_POST)){
             $NewTheme = $_POST['theme-name'];
-            $TDMode = 2;
+            $TDInvoker->mode = 2;
                 if ( array_key_exists('stage',$_GET)) {
                     $NewStage = $_GET['stage'];
                     try {
@@ -282,7 +655,7 @@
             move_uploaded_file($tempFile, $targetFile); // Перемещаем загруженные файлы из временного хранилища в нашу папку uploads
             if (!empty($_SESSION['stage'])) {
                 if (array_key_exists('stage', $_SESSION)) {
-                    $NewStage = $_SESSION['stage'];
+                    $TDInvoker->NewStage = $_SESSION['stage'];
                     try {
                         $DT = date("Y-m-d H:i:s");
                         $sql = "UPDATE `jc_lessons` SET `body` = ?, `UpLoadDate` = ?  WHERE `Stage`=?";
@@ -290,7 +663,7 @@
                         $fp = fopen($targetFile, 'rb');
                         $stmt->bindParam(1, $fp, PDO::PARAM_LOB);
                         $stmt->bindParam(2, $DT);
-                        $stmt->bindParam(3, $NewStage);
+                        $stmt->bindParam(3, $TDInvoker->NewStage);
                         $db->beginTransaction();
                         $stmt->execute();
                         $db->commit();
@@ -314,8 +687,8 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> -->
     <?php
-    if ($TDMode == 2){
-        if ($FileUploading){
+    if ($TDInvoker->mode == 2){
+        if ($TDInvoker->FileUploading){
             print("<link href=\"css/dropzone.css\" type=\"text/css\" rel=\"stylesheet\" />\n");
             echo "<script src=\"js/dropzone.js\"></script>\n";
         }
@@ -362,7 +735,7 @@
             </div>
 
             <?php
-            if ($TDMode == 1) {
+            if ($TDInvoker->mode == 1) {
                 //учебные группы
                 echo "<form method=\"POST\" action=\"\">\n";
                 echo "<h4>Редактор учебных групп:</h4>";
@@ -394,7 +767,7 @@
                         $counter++;
                     }
                 }
-            }elseif ($TDMode == 11){
+            }elseif ($TDInvoker->mode == 11){
             echo"<div class=\"modal fade\" id=\"staticBackdrop\" data-backdrop=\"static\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"staticBackdropLabel\" aria-hidden=\"true\">\n";
             echo "   <div class=\"modal-dialog\" role=\"document\">\n";
             echo"        <div class=\"modal-content\">\n";
@@ -402,20 +775,20 @@
             echo"                <h5 class=\"modal-title\" id=\"staticBackdropLabel\">Запрос на удаление группы</h5>\n";
             echo"            </div>\n";
             echo"            <div class=\"modal-body\">\n";
-            echo"                <p>При удалении группы ".$NewGroup.", будут удалены аккаунты всех студентов, входящих в нее, а также все загруженные ими домашние задания. Вы уверены?</p>\n";
+            echo"                <p>При удалении группы ".$TDInvoker->NewGroup.", будут удалены аккаунты всех студентов, входящих в нее, а также все загруженные ими домашние задания. Вы уверены?</p>\n";
             echo"            </div>\n";
             echo"            <div class=\"modal-footer\">\n";
             echo"                <button type=\"button\" class=\"btn btn-secondary\"  onclick='location.href=\"TeacherDashboard.php?do=TDEGview\"'>Отказаться</button>\n";
-            echo"               <button type=\"button\" class=\"btn btn-primary\" onclick='location.href=\"TeacherDashboard.php?do=TDEGdelete&id=".$ThisID."\"'>Удалить</button>\n";
+            echo"               <button type=\"button\" class=\"btn btn-primary\" onclick='location.href=\"TeacherDashboard.php?do=TDEGdelete&id=".$TDInvoker->ThisID."\"'>Удалить</button>\n";
             echo"           </div>\n";
             echo"        </div>\n";
             echo"    </div>\n";
             echo"</div>\n";
-            } elseif ($TDMode == 2) {
+            } elseif ($TDInvoker->mode == 2) {
                 //редактор уроков
-                if ($FileUploading) {
-                    if ($NewStage > 0) {
-                        print ("<h1>Загрузка файла в формате *.PDF для урока №" . $NewStage . "</h1>\n");
+                if ($TDInvoker->FileUploading) {
+                    if ($TDInvoker->NewStage > 0) {
+                        print ("<h1>Загрузка файла в формате *.PDF для урока №" . $TDInvoker->NewStage . "</h1>\n");
                         print ("<h2>Загружать не более одного файла</h2>\n");
                         print ("<h3>По окончании загрузки, нажмите ссылку \"Назад\"</h3>\n");
                         Print("<form action=\"TeacherDashboard.php\" class=\"dropzone\" id=\"pdfdropzone\"></form>");
@@ -506,7 +879,7 @@
                     echo"</div>\n";
                 }
 
-            }elseif ($TDMode == 21){
+            }elseif ($TDInvoker->mode == 21){
                 //запрос на удаление урока
                 echo"<div class=\"modal fade\" id=\"staticBackdrop\" data-backdrop=\"static\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"staticBackdropLabel\" aria-hidden=\"true\">\n";
                 echo "   <div class=\"modal-dialog\" role=\"document\">\n";
@@ -515,30 +888,30 @@
                 echo"                <h5 class=\"modal-title\" id=\"staticBackdropLabel\">Запрос на удаление урока</h5>\n";
                 echo"            </div>\n";
                 echo"            <div class=\"modal-body\">\n";
-                echo"                <p>После нажатия кнопки \"Удалить\", урок №".$NewStage." будет удален навсегда. Вы уверены?</p>\n";
+                echo"                <p>После нажатия кнопки \"Удалить\", урок №".$TDInvoker->NewStage." будет удален навсегда. Вы уверены?</p>\n";
                 echo"            </div>\n";
                 echo"            <div class=\"modal-footer\">\n";
                 echo"                <button type=\"button\" class=\"btn btn-secondary\"  onclick='location.href=\"TeacherDashboard.php?do=TDEDshow\"'>Отказаться</button>\n";
-                echo"               <button type=\"button\" class=\"btn btn-primary\" onclick='location.href=\"TeacherDashboard.php?do=TDEDdelete&stage=" . $NewStage . "\"'>Удалить</button>\n";
+                echo"               <button type=\"button\" class=\"btn btn-primary\" onclick='location.href=\"TeacherDashboard.php?do=TDEDdelete&stage=" . $TDInvoker->NewStage . "\"'>Удалить</button>\n";
                 echo"           </div>\n";
                 echo"        </div>\n";
                 echo"    </div>\n";
                 echo"</div>\n";
                 
-            }elseif ($TDMode == 22){
+            }elseif ($TDInvoker->mode == 22){
                 //запрос на изменение темы урока
                 echo"<div class=\"modal fade\" id=\"staticBackdrop\" data-backdrop=\"static\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"staticBackdropLabel\" aria-hidden=\"true\">\n";
                 echo "   <div class=\"modal-dialog\" role=\"document\">\n";
                 echo"        <div class=\"modal-content\">\n";
                 echo "           <div class=\"modal-header\">\n";
-                echo"                <h5 class=\"modal-title\" id=\"staticBackdropLabel\">Изменить тему урока № ".$NewStage."</h5>\n";
+                echo"                <h5 class=\"modal-title\" id=\"staticBackdropLabel\">Изменить тему урока № ".$TDInvoker->NewStage."</h5>\n";
                 echo"            </div>\n";
                 echo"            <div class=\"modal-body\">\n";
                 echo"            <form method=\"post\">\n";
                 echo"               <div class=\"form-row\">";
                 //echo"                   <div class=\"col-md-4 mb-3\">";
                 echo"                       <label>Тема урока: </label>";
-                echo"                       <input type=\"text\" class=\"form-control\" name=\"theme-name\" value=\"$CurTheme\">";
+                echo"                       <input type=\"text\" class=\"form-control\" name=\"theme-name\" value=\"$TDInvoker->CurTheme\">";
                 //echo"                   </div>";
                 echo"              </div>";
                 echo"              <br>\n";
@@ -551,7 +924,7 @@
                 echo"</div>\n";
                 
                 
-            }elseif($TDMode == 3) {
+            }elseif($TDInvoker->mode == 3) {
                 //личный кабинет
             }else{
                 //студенты
@@ -561,20 +934,20 @@
                 $sth = $db->prepare("SELECT * FROM jc_groups ORDER BY `ID` DESC");
                 $sth->execute();
                 $array = $sth->fetchAll(PDO::FETCH_ASSOC);
-                if ($currentGroup == 0) {
-                    $currentGroup = $array[0]['ID'];
+                if ($TDInvoker->currentGroup == 0) {
+                    $TDInvoker->currentGroup = $array[0]['ID'];
                     foreach ($array as $key => $value) {
                         print "  <option value=\"$value[ID]\">$value[Name]</option>\n";
                     }
                 }else{
                     foreach ($array as $key => $value) {
-                        if ($value['ID'] == $currentGroup){
+                        if ($value['ID'] == $TDInvoker->currentGroup){
                             echo "   <option value=\"$value[ID]\">$value[Name]</option>\n";
                             break;
                         }
                     }
                     foreach ($array as $key => $value) {
-                        if ($value['ID'] != $currentGroup){
+                        if ($value['ID'] != $TDInvoker->currentGroup){
                             print "  <option value=\"$value[ID]\">$value[Name]</option>\n";
                         }
                     }
@@ -584,7 +957,7 @@
                 echo "<button class=\"btn btn-primary btn-lg btn-block\" type=\"submit\">Показать</button>";
                 echo "</form>\n";
                 $sth = $db->prepare("SELECT * FROM jc_students WHERE `InGroup`=? AND `teacher`=?");
-                $sth->execute(array($currentGroup, $ID));
+                $sth->execute(array($TDInvoker->currentGroup, $ID));
                 $array = $sth->fetchAll(PDO::FETCH_ASSOC);
                 $counter = 1;
                 echo "<div class=\"table-responsive\">\n";
@@ -644,7 +1017,7 @@
         </script>
         <?php
         require ('Disconnect.php');
-        if (($TDMode == 11)| ($TDMode == 21) | ($TDMode == 22)){
+        if (($TDInvoker->mode == 11)| ($TDInvoker->mode == 21) | ($TDInvoker->mode == 22)){
             echo "<!-- Скрипт, вызывающий модальное окно после загрузки страницы -->\n";
             echo "<script>\n";
             echo "    $(document).ready(function() {\n";
