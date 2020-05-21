@@ -19,7 +19,7 @@
     $fistName = "";
     $patronymic = "";
     $oldpasshash = "";
-    $ThisStage = 0;
+    //$ThisStage = 0;
     $MaxAllowedStage = 0;
     $MaxStage = 0;
     $ThisTheme = "";
@@ -27,6 +27,8 @@
     $sql = "SELECT * FROM jc_students WHERE `ID`=:ID ";
     $sth = $db->prepare($sql);
     $sth->bindValue(':ID', $ID);
+    
+    
     
     include ('Commands.php');
     
@@ -84,12 +86,77 @@
         }
     }
     
+    class UDShowFromList implements Command
+    {
+        
+        
+        public function __construct(Invoker $inv)
+        {
+           $this->Invoker = $inv;     
+        }
+        public function execute(): void
+        {
+            if (array_key_exists('stage', $_GET)) {
+                    $this->Invoker->ThisStage = $_GET['stage'];
+                    $_SESSION['stage'] = $this->Invoker->ThisStage;
+                }
+        }
+    }
+    
+    class UDPrevLesson implements Command
+    {
+        
+        private $Invoker;
+        
+        public function __construct(Invoker $inv)
+        {
+            $this->Invoker = $inv;
+        }
+        public function execute(): void
+        {
+            if (array_key_exists('stage', $_GET)) {
+                    $this->Invoker->ThisStage = $_GET['stage'];
+                    if ($this->Invoker->ThisStage > 1){
+                        $this->Invoker->ThisStage--;
+                        $_SESSION['stage'] = $this->Invoker->ThisStage;
+                    }
+                }
+                
+        }
+    }
+    
+    class UDNextLesson implements Command
+    {
+        
+        private $Invoker;
+       
+        
+        public function __construct(Invoker $inv)
+        {
+            $this->Invoker = $inv;
+        }
+        public function execute(): void
+        {
+            if (array_key_exists('stage', $_GET)) {
+                    $this->Invoker->ThisStage = $_GET['stage'];
+                    if ($this->Invoker->ThisStage < $MaxStage){
+                        $this->Invoker->ThisStage++;
+                        $_SESSION['stage'] = $this->Invoker->ThisStage;
+                    }
+                }    
+                
+        }
+    }
+    
     $UDInvoker = new Invoker();
     $UDInvoker->setUDEditProfile(new UDEditProfile($UDInvoker));
     $UDInvoker->setUDShowFullList(new UDShowFullList($UDInvoker));
     $UDInvoker->setUDChgHM(new UDChgHM());
+    $UDInvoker->setUDShowFromList(new UDShowFromList($UDInvoker));
+    $UDInvoker->setUDPrevLesson(new UDPrevLesson($UDInvoker));
+    $UDInvoker->setUDNextLesson(new UDNextLesson($UDInvoker));
     
-    try {
+     try {
         $sth->execute();
         $row = $sth->fetchAll(PDO::FETCH_ASSOC);
         if (count($row) > 0) {
@@ -108,10 +175,10 @@
                $scMess ="Ваша регистрация прошла успешно! ";
            }
            else {$scMess ="";}
-           $ThisStage = $row[0]['stage'];
+           $UDInvoker->ThisStage = $row[0]['stage'];
            $MaxAllowedStage = $row[0]['stage'];
-           $MaxStage = $ThisStage;
-           $_SESSION['stage'] = $ThisStage;
+           $MaxStage = $UDInvoker->ThisStage;
+           $_SESSION['stage'] = $UDInvoker->ThisStage;
         }
     }
     catch (PDOException $e)
@@ -119,7 +186,12 @@
         $flMess = 'Ошибка Базы Данных!';
     }
     
+    
+    
+    
     $UDInvoker->comExect();
+    
+   
     
     //команды
     if (count($_GET)>0) {
@@ -149,15 +221,15 @@
             }*/
             
             //Урок из списка
-            if (($_GET['do'] == 'UDShowFromList')){
+            /*if (($_GET['do'] == 'UDShowFromList')){
                 if (array_key_exists('stage', $_GET)) {
                     $ThisStage = $_GET['stage'];
                     $_SESSION['stage'] = $ThisStage;
                 }
-            }
+            }*/
             
             //Предыдущий урок
-            if (($_GET['do'] == 'UDPrevLesson')){
+            /*if (($_GET['do'] == 'UDPrevLesson')){
                 if (array_key_exists('stage', $_GET)) {
                     $ThisStage = $_GET['stage'];
                     if ($ThisStage > 1){
@@ -175,9 +247,9 @@
                         $_SESSION['stage'] = $ThisStage;
                     }
                 }
-            }
+            }*/
             //скачать личные данные
-            if (($_GET['do'] == 'UDDwnUserData')){
+            /*if (($_GET['do'] == 'UDDwnUserData')){
                 $UDMode = 1;
                 if (ob_get_level()) {
                     ob_end_clean();
@@ -228,7 +300,7 @@
                 }
                 header("Location: index.php");
 
-            }
+            }*/
         }
     }
     if (count($_POST)>0) {
@@ -463,10 +535,10 @@
                 echo "<button class=\"btn btn-primary btn-lg\" type=\"submit\">Обновить</button>\n";
                 echo "</form>";
                 echo "<br>\n";
-                echo "<h4>Дополнительные действия</h4>\n";
+                //echo "<h4>Дополнительные действия</h4>\n";
                 echo "<br>\n";
-                echo "<button type=\"button\" class=\"btn btn-secondary\" onclick='location.href=\"UserDashboard.php?do=UDDwnUserData\"'>Скачать личные данные</button>\n";
-                echo "<a class=\"btn btn-warning\" role=\"button\" data-toggle=\"modal\" href=\"#staticBackdropDelData\">Удалить аккаунт</a>\n";
+                //echo "<button type=\"button\" class=\"btn btn-secondary\" onclick='location.href=\"UserDashboard.php?do=UDDwnUserData\"'>Скачать личные данные</button>\n";
+                //echo "<a class=\"btn btn-warning\" role=\"button\" data-toggle=\"modal\" href=\"#staticBackdropDelData\">Удалить аккаунт</a>\n";
                 echo "<footer class=\"mastfoot mt-auto\">\n";
                 echo "<div class=\"inner\">\n";
                 echo "<p>\n";
@@ -564,7 +636,7 @@
             }else{
                 try {
                     $sth = $db->prepare("SELECT * FROM `jc_lessons` WHERE `Stage`=?");
-                    $sth->execute(array($ThisStage));
+                    $sth->execute(array($UDInvoker->ThisStage));
                     $row = $sth->fetchAll(PDO::FETCH_ASSOC);
                     if (count($row) == 1) {
                         $ThisTheme = $row [0]['theme'];   
@@ -573,11 +645,11 @@
                     $flMess = 'Ошибка Базы Данных!';
                 }    
                 echo "<div class=\"d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom\">\n";
-                echo "<h1 class=\"h2\">".$scMess." Урок № ".$ThisStage." ".$ThisTheme."</h1>\n";
+                echo "<h1 class=\"h2\">".$scMess." Урок № ".$UDInvoker->ThisStage." ".$ThisTheme."</h1>\n";
                 echo "    <div class=\"btn-toolbar mb-2 mb-md-0\">\n";
                 echo "        <div class=\"btn-group mr-2\">\n";
-                echo "            <button class=\"btn btn-sm btn-outline-secondary\" onClick='location.href=\"UserDashboard.php?do=UDPrevLesson&stage=" . $ThisStage . "\"'>Предыдущий</button>\n";
-                echo "            <button class=\"btn btn-sm btn-outline-secondary\" onClick='location.href=\"UserDashboard.php?do=UDPNextLesson&stage=" . $ThisStage . "\"'>Следующий</button>\n";
+                echo "            <button class=\"btn btn-sm btn-outline-secondary\" onClick='location.href=\"UserDashboard.php?do=UDPrevLesson&stage=" . $UDInvoker->ThisStage . "\"'>Предыдущий</button>\n";
+                echo "            <button class=\"btn btn-sm btn-outline-secondary\" onClick='location.href=\"UserDashboard.php?do=UDPNextLesson&stage=" . $UDInvoker->ThisStage . "\"'>Следующий</button>\n";
                 echo "        </div>\n";
                 echo "    </div>\n";
                 echo "</div>\n";
@@ -585,7 +657,7 @@
                 $sql = "SELECT * FROM jc_homeworks WHERE `user_id`=:ID AND `stage`=:stage";
                 $sth = $db->prepare($sql);
                 $sth->bindValue(':ID', $ID);
-                $sth->bindValue(':stage', $ThisStage);
+                $sth->bindValue(':stage', $UDInvoker->ThisStage);
                 try {
                     $sth->execute();
                     $row = $sth->fetchAll(PDO::FETCH_ASSOC);
@@ -607,7 +679,7 @@
                                 echo " и проверено преподавателем. Вам доступен следующий урок курса.</h3>";
                             } else {
                                 echo ", но ещё не проверено преподавателем.</h3>\n";
-                                //echo "<h3 class=\"h3\">Вы можете <a href=\"UserDashboard.php?do=UDDelHM&stage=" . $ThisStage . "\">Удалить</a> или  <a href=\"UserDashboard.php?do=UDChgHM&stage=" . $ThisStage . "\">Изменить</a> его.</h3>";
+                                //echo "<h3 class=\"h3\">Вы можете <a href=\"UserDashboard.php?do=UDDelHM&stage=" . $UDInvoker->ThisStage . "\">Удалить</a> или  <a href=\"UserDashboard.php?do=UDChgHM&stage=" . $UDInvoker->ThisStage . "\">Изменить</a> его.</h3>";
                                 echo "<h3 class=\"h3\">Вы можете <a  data-toggle=\"modal\" href=\"#staticBackdropDelHW\">Удалить</a> или <a  data-toggle=\"modal\" href=\"#staticBackdropDelHW\">Изменить</a> его.</h3>";
                             }
                         }
@@ -633,7 +705,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Отказаться</button>
-                            <button type="button" class="btn btn-primary" onclick='location.href="UserDashboard.php?do=UDDelHM&stage=<?php echo $ThisStage ?>"'>Удалить</button>
+                            <button type="button" class="btn btn-primary" onclick='location.href="UserDashboard.php?do=UDDelHM&stage=<?php echo $UDInvoker->ThisStage ?>"'>Удалить</button>
                         </div>
                     </div>
                 </div>
@@ -653,7 +725,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Отказаться</button>
-                            <button type="button" class="btn btn-primary" onclick='location.href="UserDashboard.php?do=UDDelUserData&stage=<?php echo $ThisStage ?>"'>Удалить</button>
+                            <button type="button" class="btn btn-primary" onclick='location.href="UserDashboard.php?do=UDDelUserData&stage=<?php echo $UDInvoker->ThisStage ?>"'>Удалить</button>
                         </div>
                     </div>
                 </div>
