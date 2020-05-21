@@ -663,7 +663,7 @@
                         $fp = fopen($targetFile, 'rb');
                         $stmt->bindParam(1, $fp, PDO::PARAM_LOB);
                         $stmt->bindParam(2, $DT);
-                        $stmt->bindParam(3, $$TDInvoker->NewStage);
+                        $stmt->bindParam(3, $TDInvoker->NewStage);
                         $db->beginTransaction();
                         $stmt->execute();
                         $db->commit();
